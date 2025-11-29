@@ -1,0 +1,379 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// ==================== USERS & CUSTOMERS ====================
+
+model User {
+  id                    String    @id @default(cuid())
+  email                 String    @unique
+  passwordHash          String    @map("password_hash")
+  firstName             String    @map("first_name")
+  lastName              String    @map("last_name")
+  companyName           String?   @map("company_name")
+  customerNumber        String    @unique @map("customer_number") // Format: MC-XXXXXX
+  customerGroupId       String?   @map("customer_group_id")
+  customerGroup         CustomerGroup? @relation(fields: [customerGroupId], references: [id])
+  isVerifiedBusiness    Boolean   @default(false) @map("is_verified_business")
+  canPurchaseOnInvoice  Boolean   @default(false) @map("can_purchase_on_invoice")
+  totalOnlinePurchases  Decimal   @default(0) @map("total_online_purchases") @db.Decimal(10, 2)
+
+  // Billing Address
+  billingStreet         String?   @map("billing_street")
+  billingCity           String?   @map("billing_city")
+  billingPostalCode     String?   @map("billing_postal_code")
+  billingCountry        String?   @default("Deutschland") @map("billing_country")
+
+  // Shipping Address
+  shippingStreet        String?   @map("shipping_street")
+  shippingCity          String?   @map("shipping_city")
+  shippingPostalCode    String?   @map("shipping_postal_code")
+  shippingCountry       String?   @default("Deutschland") @map("shipping_country")
+
+  phone                 String?
+  isActive              Boolean   @default(true) @map("is_active")
+  createdAt             DateTime  @default(now()) @map("created_at")
+  updatedAt             DateTime  @updatedAt @map("updated_at")
+
+  orders                Order[]
+  carts                 Cart[]
+  favorites             Favorite[]
+  vouchers              StoreVoucher[]
+
+  @@map("users")
+}
+
+model CustomerGroup {
+  id                  String    @id @default(cuid())
+  name                String    @unique
+  discountPercentage  Decimal   @map("discount_percentage") @db.Decimal(5, 2)
+  description         String?
+  createdAt           DateTime  @default(now()) @map("created_at")
+  updatedAt           DateTime  @updatedAt @map("updated_at")
+
+  users               User[]
+
+  @@map("customer_groups")
+}
+
+// ==================== ADMIN USERS ====================
+
+model AdminUser {
+  id            String    @id @default(cuid())
+  email         String    @unique
+  passwordHash  String    @map("password_hash")
+  name          String
+  role          AdminRole @default(editor)
+  isActive      Boolean   @default(true) @map("is_active")
+  lastLogin     DateTime? @map("last_login")
+  createdAt     DateTime  @default(now()) @map("created_at")
+  updatedAt     DateTime  @updatedAt @map("updated_at")
+
+  @@map("admin_users")
+}
+
+enum AdminRole {
+  super_admin
+  admin
+  editor
+}
+
+// ==================== PRODUCTS ====================
+
+model Product {
+  id                    String    @id @default(cuid())
+  sku                   String    @unique
+  ean                   String?   // Barcode
+  name                  String
+  slug                  String    @unique
+  description           String?   @db.Text
+  shortDescription      String?   @map("short_description")
+  manufacturer          String?
+  manufacturerSku       String?   @map("manufacturer_sku")
+
+  categoryId            String?   @map("category_id")
+  category              Category? @relation(fields: [categoryId], references: [id])
+
+  basePrice             Decimal   @map("base_price") @db.Decimal(10, 2)
+  taxRate               Decimal   @default(19) @map("tax_rate") @db.Decimal(5, 2)
+
+  isAvailableOnline     Boolean   @default(true) @map("is_available_online")
+  stockQuantity         Int       @default(0) @map("stock_quantity")
+  minimumOrderQuantity  Int       @default(1) @map("minimum_order_quantity")
+
+  unitOfMeasure         String    @default("Stück") @map("unit_of_measure")
+  unitsPerPackage       Int?      @map("units_per_package")
+  packagesPerCarton     Int?      @map("packages_per_carton")
+
+  weightGrams           Int?      @map("weight_grams")
+  lengthMm              Int?      @map("length_mm")
+  widthMm               Int?      @map("width_mm")
+  heightMm              Int?      @map("height_mm")
+
+  // SEO
+  seoTitle              String?   @map("seo_title")
+  seoDescription        String?   @map("seo_description") @db.Text
+  seoKeywords           String?   @map("seo_keywords")
+
+  isActive              Boolean   @default(true) @map("is_active")
+  isFeatured            Boolean   @default(false) @map("is_featured")
+  isBestseller          Boolean   @default(false) @map("is_bestseller")
+  isNewArrival          Boolean   @default(false) @map("is_new_arrival")
+  createdAt             DateTime  @default(now()) @map("created_at")
+  updatedAt             DateTime  @updatedAt @map("updated_at")
+
+  images                ProductImage[]
+  attributes            ProductAttribute[]
+  cartItems             CartItem[]
+  orderItems            OrderItem[]
+  favorites             Favorite[]
+
+  @@index([categoryId])
+  @@index([isActive, isAvailableOnline])
+  @@index([sku])
+  @@index([ean])
+  @@map("products")
+}
+
+model ProductImage {
+  id          String    @id @default(cuid())
+  productId   String    @map("product_id")
+  product     Product   @relation(fields: [productId], references: [id], onDelete: Cascade)
+  url         String
+  altText     String?   @map("alt_text")
+  sortOrder   Int       @default(0) @map("sort_order")
+  isPrimary   Boolean   @default(false) @map("is_primary")
+  createdAt   DateTime  @default(now()) @map("created_at")
+
+  @@index([productId])
+  @@map("product_images")
+}
+
+model ProductAttribute {
+  id          String    @id @default(cuid())
+  productId   String    @map("product_id")
+  product     Product   @relation(fields: [productId], references: [id], onDelete: Cascade)
+  name        String    // e.g., "GSM", "Format", "Farbe"
+  value       String    // e.g., "80", "A4", "Weiß"
+  sortOrder   Int       @default(0) @map("sort_order")
+
+  @@index([productId])
+  @@map("product_attributes")
+}
+
+// ==================== CATEGORIES ====================
+
+model Category {
+  id              String      @id @default(cuid())
+  name            String
+  slug            String      @unique
+  description     String?     @db.Text
+  imageUrl        String?     @map("image_url")
+  parentId        String?     @map("parent_id")
+  parent          Category?   @relation("CategoryHierarchy", fields: [parentId], references: [id])
+  children        Category[]  @relation("CategoryHierarchy")
+  seoTitle        String?     @map("seo_title")
+  seoDescription  String?     @map("seo_description") @db.Text
+  sortOrder       Int         @default(0) @map("sort_order")
+  isActive        Boolean     @default(true) @map("is_active")
+  createdAt       DateTime    @default(now()) @map("created_at")
+  updatedAt       DateTime    @updatedAt @map("updated_at")
+
+  products        Product[]
+
+  @@index([parentId])
+  @@map("categories")
+}
+
+// ==================== ORDERS ====================
+
+model Order {
+  id                    String        @id @default(cuid())
+  orderNumber           String        @unique @map("order_number") // Format: MCP-YYYYMMDD-XXXXX
+  userId                String        @map("user_id")
+  user                  User          @relation(fields: [userId], references: [id])
+  status                OrderStatus   @default(pending)
+
+  subtotal              Decimal       @db.Decimal(10, 2)
+  taxAmount             Decimal       @map("tax_amount") @db.Decimal(10, 2)
+  shippingCost          Decimal       @map("shipping_cost") @db.Decimal(10, 2)
+  total                 Decimal       @db.Decimal(10, 2)
+
+  shippingAddress       Json          @map("shipping_address")
+  billingAddress        Json          @map("billing_address")
+
+  paymentMethod         String?       @map("payment_method")
+  paymentStatus         PaymentStatus @default(pending) @map("payment_status")
+  stripePaymentIntentId String?       @map("stripe_payment_intent_id")
+
+  notes                 String?       @db.Text
+  createdAt             DateTime      @default(now()) @map("created_at")
+  updatedAt             DateTime      @updatedAt @map("updated_at")
+
+  items                 OrderItem[]
+  voucher               StoreVoucher?
+  invoice               Invoice?
+
+  @@index([userId])
+  @@index([orderNumber])
+  @@index([status])
+  @@map("orders")
+}
+
+enum OrderStatus {
+  pending
+  paid
+  processing
+  shipped
+  delivered
+  cancelled
+}
+
+enum PaymentStatus {
+  pending
+  paid
+  failed
+  refunded
+}
+
+model OrderItem {
+  id          String    @id @default(cuid())
+  orderId     String    @map("order_id")
+  order       Order     @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  productId   String    @map("product_id")
+  product     Product   @relation(fields: [productId], references: [id])
+  quantity    Int
+  unitPrice   Decimal   @map("unit_price") @db.Decimal(10, 2)
+  totalPrice  Decimal   @map("total_price") @db.Decimal(10, 2)
+
+  @@index([orderId])
+  @@map("order_items")
+}
+
+// ==================== SHOPPING CART ====================
+
+model Cart {
+  id          String      @id @default(cuid())
+  userId      String      @map("user_id")
+  user        User        @relation(fields: [userId], references: [id], onDelete: Cascade)
+  name        String?     // For saved/named carts
+  isActive    Boolean     @default(true) @map("is_active")
+  createdAt   DateTime    @default(now()) @map("created_at")
+  updatedAt   DateTime    @updatedAt @map("updated_at")
+
+  items       CartItem[]
+
+  @@index([userId])
+  @@map("carts")
+}
+
+model CartItem {
+  id          String    @id @default(cuid())
+  cartId      String    @map("cart_id")
+  cart        Cart      @relation(fields: [cartId], references: [id], onDelete: Cascade)
+  productId   String    @map("product_id")
+  product     Product   @relation(fields: [productId], references: [id])
+  quantity    Int
+  createdAt   DateTime  @default(now()) @map("created_at")
+  updatedAt   DateTime  @updatedAt @map("updated_at")
+
+  @@unique([cartId, productId])
+  @@index([cartId])
+  @@map("cart_items")
+}
+
+// ==================== FAVORITES ====================
+
+model Favorite {
+  id          String    @id @default(cuid())
+  userId      String    @map("user_id")
+  user        User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  productId   String    @map("product_id")
+  product     Product   @relation(fields: [productId], references: [id], onDelete: Cascade)
+  createdAt   DateTime  @default(now()) @map("created_at")
+
+  @@unique([userId, productId])
+  @@index([userId])
+  @@map("favorites")
+}
+
+// ==================== STORE VOUCHERS ====================
+
+model StoreVoucher {
+  id          String    @id @default(cuid())
+  userId      String    @map("user_id")
+  user        User      @relation(fields: [userId], references: [id])
+  orderId     String    @unique @map("order_id")
+  order       Order     @relation(fields: [orderId], references: [id])
+  code        String    @unique
+  amount      Decimal   @db.Decimal(10, 2) // 5 or 10 euros
+  isRedeemed  Boolean   @default(false) @map("is_redeemed")
+  redeemedAt  DateTime? @map("redeemed_at")
+  expiresAt   DateTime  @map("expires_at")
+  createdAt   DateTime  @default(now()) @map("created_at")
+
+  @@index([userId])
+  @@index([code])
+  @@map("store_vouchers")
+}
+
+// ==================== EAN EXCLUSION LIST ====================
+
+model EanExclusion {
+  id          String    @id @default(cuid())
+  ean         String    @unique
+  reason      String?
+  createdAt   DateTime  @default(now()) @map("created_at")
+
+  @@map("ean_exclusions")
+}
+
+// ==================== CONTACT SUBMISSIONS ====================
+
+model ContactSubmission {
+  id          String    @id @default(cuid())
+  name        String
+  email       String
+  phone       String?
+  company     String?
+  subject     String
+  message     String    @db.Text
+  isRead      Boolean   @default(false) @map("is_read")
+  createdAt   DateTime  @default(now()) @map("created_at")
+
+  @@map("contact_submissions")
+}
+
+// ==================== INVOICES ====================
+
+model Invoice {
+  id              String    @id @default(cuid())
+  orderId         String    @unique @map("order_id")
+  order           Order     @relation(fields: [orderId], references: [id])
+  invoiceNumber   String    @unique @map("invoice_number") // Format: RE-YYYYMMDD-XXXXX
+  totalAmount     Decimal   @map("total_amount") @db.Decimal(10, 2)
+  pdfPath         String?   @map("pdf_path")
+  issuedAt        DateTime  @default(now()) @map("issued_at")
+
+  @@map("invoices")
+}
+
+// ==================== SETTINGS ====================
+
+model Setting {
+  id          String    @id @default(cuid())
+  key         String    @unique
+  value       String    @db.Text
+  description String?
+  updatedAt   DateTime  @updatedAt @map("updated_at")
+
+  @@map("settings")
+}
