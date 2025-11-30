@@ -301,8 +301,8 @@ export default function HomePage() {
       </section>
 
       {/* USP Bar */}
-      <section className="bg-white border-y border-gray-100">
-        <div className="container py-12 my-4">
+      <section className="bg-white border-y border-gray-100 py-8">
+        <div className="container py-6">
           <motion.div
             initial="hidden"
             whileInView="visible"
