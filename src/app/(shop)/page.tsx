@@ -300,8 +300,11 @@ export default function HomePage() {
         </div>
       </section>
 
+      {/* Spacer - extends hero dark background */}
+      <div className="h-12 bg-gradient-to-b from-gray-900 to-gray-800" />
+
       {/* USP Bar */}
-      <section className="bg-white border-y border-gray-100 my-12">
+      <section className="bg-white border-y border-gray-200">
         <div className="container py-10">
           <motion.div
             initial="hidden"
@@ -334,8 +337,11 @@ export default function HomePage() {
         </div>
       </section>
 
+      {/* Spacer - extends to categories background */}
+      <div className="h-12 bg-gray-50" />
+
       {/* Categories */}
-      <section className="py-16 lg:py-24 bg-gray-50">
+      <section className="pb-16 lg:pb-24 bg-gray-50">
         <div className="container">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
