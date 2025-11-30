@@ -92,10 +92,10 @@ export default async function AccountPage() {
       </div>
 
       {/* Customer Group Info */}
-      {user.customerGroup && user.customerGroup.discountPercentage > 0 && (
+      {user.customerGroup && Number(user.customerGroup.discountPercentage) > 0 && (
         <div className="bg-[#28A745]/10 border border-[#28A745] rounded-lg p-4">
           <p className="font-medium text-[#28A745]">
-            Als {user.customerGroup.name}-Kunde erhalten Sie {user.customerGroup.discountPercentage}% Rabatt auf alle Produkte!
+            Als {user.customerGroup.name}-Kunde erhalten Sie {Number(user.customerGroup.discountPercentage)}% Rabatt auf alle Produkte!
           </p>
         </div>
       )}
