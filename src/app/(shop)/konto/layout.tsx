@@ -37,9 +37,9 @@ export default async function AccountLayout({ children }: AccountLayoutProps) {
             <div className="pb-4 mb-4 border-b border-[#E0E0E0]">
               <p className="text-sm text-[#666]">Angemeldet als</p>
               <p className="font-medium truncate">{session.email}</p>
-              {session.customerGroupName && (
+              {session.discountPercentage > 0 && (
                 <span className="inline-block mt-1 px-2 py-0.5 bg-[#E31E24]/10 text-[#E31E24] text-xs rounded">
-                  {session.customerGroupName}
+                  {session.discountPercentage}% Rabatt
                 </span>
               )}
             </div>
