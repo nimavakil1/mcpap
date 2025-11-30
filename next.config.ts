@@ -25,9 +25,45 @@ const nextConfig: NextConfig = {
       },
       {
         protocol: 'https',
+        hostname: 'source.unsplash.com',
+      },
+      {
+        protocol: 'https',
         hostname: 'via.placeholder.com',
       },
-      // Product image sources
+      // Product image sources from EAN lookups
+      {
+        protocol: 'https',
+        hostname: '**.ssl-images-amazon.com',
+      },
+      {
+        protocol: 'https',
+        hostname: '**.media-amazon.com',
+      },
+      {
+        protocol: 'https',
+        hostname: '**.walmartimages.com',
+      },
+      {
+        protocol: 'https',
+        hostname: '**.scene7.com',
+      },
+      {
+        protocol: 'https',
+        hostname: '**.cloudfront.net',
+      },
+      {
+        protocol: 'https',
+        hostname: '**.googleapis.com',
+      },
+      {
+        protocol: 'https',
+        hostname: '**.ggpht.com',
+      },
+      {
+        protocol: 'https',
+        hostname: '**.openfoodfacts.org',
+      },
       {
         protocol: 'https',
         hostname: '**.staples.co.uk',
