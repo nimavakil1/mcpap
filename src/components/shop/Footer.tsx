@@ -1,7 +1,11 @@
+'use client';
+
 import Link from 'next/link';
-import { Phone, Mail, MapPin, Clock, CreditCard, Truck, Shield, Headphones, ArrowRight } from 'lucide-react';
+import { Phone, Mail, Clock, CreditCard, Truck, Shield, Headphones, ArrowRight } from 'lucide-react';
+import { useState } from 'react';
 
 export default function Footer() {
+  const [logoError, setLogoError] = useState(false);
   return (
     <footer className="bg-gray-900 text-white mt-auto">
       {/* Newsletter Section */}
@@ -60,19 +64,18 @@ export default function Footer() {
           {/* Company Info */}
           <div className="lg:col-span-2">
             <Link href="/" className="inline-block mb-6">
-              <img
-                src="https://mcpaper.de/wp-content/uploads/2025/02/mcpaper-logo.png"
-                alt="McPaper"
-                className="h-10 brightness-0 invert"
-                onError={(e) => {
-                  const target = e.target as HTMLImageElement;
-                  target.style.display = 'none';
-                  const fallback = document.createElement('span');
-                  fallback.className = 'text-2xl font-bold';
-                  fallback.innerHTML = 'Mc<span class="text-red-500">Paper</span>';
-                  target.parentElement?.appendChild(fallback);
-                }}
-              />
+              {logoError ? (
+                <span className="text-2xl font-bold">
+                  Mc<span className="text-red-500">Paper</span>
+                </span>
+              ) : (
+                <img
+                  src="https://mcpaper.de/wp-content/uploads/2025/02/mcpaper-logo.png"
+                  alt="McPaper"
+                  className="h-10 brightness-0 invert"
+                  onError={() => setLogoError(true)}
+                />
+              )}
             </Link>
             <p className="text-gray-400 mb-6 max-w-sm">
               Deutschlands führender Fachmarkt für Bürobedarf, Schreibwaren und Geschenkartikel.
