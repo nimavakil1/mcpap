@@ -70,9 +70,9 @@ export default async function OrderConfirmationPage({ params }: OrderPageProps) 
 
   const statusSteps = [
     { id: 'confirmed', label: 'Bestätigt', icon: CheckCircle, done: true },
-    { id: 'processing', label: 'In Bearbeitung', icon: Package, done: order.status !== 'PENDING' },
-    { id: 'shipped', label: 'Versendet', icon: Truck, done: order.status === 'SHIPPED' || order.status === 'DELIVERED' },
-    { id: 'delivered', label: 'Zugestellt', icon: Mail, done: order.status === 'DELIVERED' },
+    { id: 'processing', label: 'In Bearbeitung', icon: Package, done: order.status !== 'pending' },
+    { id: 'shipped', label: 'Versendet', icon: Truck, done: order.status === 'shipped' || order.status === 'delivered' },
+    { id: 'delivered', label: 'Zugestellt', icon: Mail, done: order.status === 'delivered' },
   ];
 
   return (
