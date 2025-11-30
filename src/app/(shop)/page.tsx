@@ -217,7 +217,7 @@ export default function HomePage() {
   return (
     <div className="overflow-hidden">
       {/* Hero Section */}
-      <section className="relative min-h-[600px] lg:min-h-[700px] bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900 text-white overflow-hidden">
+      <section className="relative min-h-[600px] lg:min-h-[700px] pb-12 bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900 text-white overflow-hidden">
         {/* Animated background grid */}
         <div className="absolute inset-0 bg-[linear-gradient(rgba(255,255,255,0.03)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.03)_1px,transparent_1px)] bg-[size:64px_64px]" />
 
@@ -300,9 +300,6 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* Spacer - extends hero dark background */}
-      <div className="h-12 bg-gradient-to-b from-gray-900 to-gray-800" />
-
       {/* USP Bar */}
       <section className="bg-white border-y border-gray-200">
         <div className="container py-10">
@@ -337,11 +334,8 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* Spacer - extends to categories background */}
-      <div className="h-12 bg-gray-50" />
-
       {/* Categories */}
-      <section className="pb-16 lg:pb-24 bg-gray-50">
+      <section className="pt-12 pb-16 lg:pb-24 bg-gray-50">
         <div className="container">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
