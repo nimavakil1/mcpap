@@ -154,8 +154,8 @@ export default async function OrdersPage({ searchParams }: OrdersPageProps) {
                       <p className="font-medium">
                         {order.user?.firstName} {order.user?.lastName}
                       </p>
-                      {order.user?.company && (
-                        <p className="text-xs text-gray-500">{order.user.company}</p>
+                      {order.user?.companyName && (
+                        <p className="text-xs text-gray-500">{order.user.companyName}</p>
                       )}
                       <p className="text-xs text-gray-500">{order.user?.email}</p>
                     </div>

@@ -12,7 +12,7 @@ interface UserData {
   lastName: string;
   email: string;
   phone: string;
-  company: string;
+  companyName: string;
   taxId: string;
 }
 
@@ -44,7 +44,7 @@ export default function SettingsPage() {
     lastName: '',
     email: '',
     phone: '',
-    company: '',
+    companyName: '',
     taxId: '',
   });
 
@@ -77,7 +77,7 @@ export default function SettingsPage() {
               lastName: data.user.lastName || '',
               email: data.user.email || '',
               phone: data.user.phone || '',
-              company: data.user.company || '',
+              companyName: data.user.companyName || '',
               taxId: data.user.taxId || '',
             });
             if (data.user.defaultShippingAddress) {
@@ -222,8 +222,8 @@ export default function SettingsPage() {
           />
           <Input
             label="Firma"
-            value={userData.company}
-            onChange={(e) => setUserData({ ...userData, company: e.target.value })}
+            value={userData.companyName}
+            onChange={(e) => setUserData({ ...userData, companyName: e.target.value })}
           />
           <Input
             label="USt-IdNr."

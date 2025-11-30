@@ -173,10 +173,10 @@ export default async function AccountPage() {
               <dt className="text-[#666]">E-Mail</dt>
               <dd>{user.email}</dd>
             </div>
-            {user.company && (
+            {user.companyName && (
               <div className="flex justify-between">
                 <dt className="text-[#666]">Firma</dt>
-                <dd>{user.company}</dd>
+                <dd>{user.companyName}</dd>
               </div>
             )}
             <div className="flex justify-between">
