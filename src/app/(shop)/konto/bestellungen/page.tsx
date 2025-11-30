@@ -19,7 +19,11 @@ export default async function OrdersPage() {
     where: { userId: session.id },
     orderBy: { createdAt: 'desc' },
     include: {
-      items: true,
+      items: {
+        include: {
+          product: true,
+        },
+      },
       voucher: true,
     },
   });
@@ -96,7 +100,7 @@ export default async function OrdersPage() {
                   {order.items.slice(0, 3).map((item) => (
                     <div key={item.id} className="py-3 flex justify-between">
                       <div>
-                        <p className="font-medium">{item.productName}</p>
+                        <p className="font-medium">{item.product.name}</p>
                         <p className="text-sm text-[#666]">
                           {item.quantity} × {formatPrice(Number(item.unitPrice))}
                         </p>
