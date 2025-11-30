@@ -32,7 +32,7 @@ export default async function OrderConfirmationPage({ params }: OrderPageProps) 
     },
     include: {
       items: true,
-      vouchers: true,
+      voucher: true,
     },
   });
 
@@ -126,7 +126,7 @@ export default async function OrderConfirmationPage({ params }: OrderPageProps) 
       </div>
 
       {/* Voucher if available */}
-      {order.vouchers.length > 0 && (
+      {order.voucher && (
         <div className="bg-[#FF6B00]/10 border border-[#FF6B00] rounded-lg p-6 mb-8">
           <div className="flex items-center gap-4">
             <Gift size={40} className="text-[#FF6B00]" />
@@ -135,15 +135,13 @@ export default async function OrderConfirmationPage({ params }: OrderPageProps) 
               <p className="text-[#666] text-sm">
                 Als Dankeschön für Ihre Bestellung erhalten Sie einen Gutschein für Ihren nächsten Einkauf in einer unserer Filialen.
               </p>
-              {order.vouchers.map((voucher) => (
-                <div key={voucher.id} className="mt-3 p-3 bg-white rounded border border-[#FF6B00]">
-                  <p className="font-mono text-lg font-bold">{voucher.code}</p>
-                  <p className="text-sm">
-                    Wert: <strong>{formatPrice(Number(voucher.amount))}</strong> |
-                    Gültig bis: {new Date(voucher.validUntil).toLocaleDateString('de-DE')}
-                  </p>
-                </div>
-              ))}
+              <div className="mt-3 p-3 bg-white rounded border border-[#FF6B00]">
+                <p className="font-mono text-lg font-bold">{order.voucher.code}</p>
+                <p className="text-sm">
+                  Wert: <strong>{formatPrice(Number(order.voucher.amount))}</strong> |
+                  Gültig bis: {new Date(order.voucher.expiresAt).toLocaleDateString('de-DE')}
+                </p>
+              </div>
             </div>
           </div>
         </div>
