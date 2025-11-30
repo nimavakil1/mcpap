@@ -24,7 +24,7 @@ export default async function CustomersPage({ searchParams }: CustomersPageProps
       { email: { contains: search, mode: 'insensitive' } },
       { firstName: { contains: search, mode: 'insensitive' } },
       { lastName: { contains: search, mode: 'insensitive' } },
-      { company: { contains: search, mode: 'insensitive' } },
+      { companyName: { contains: search, mode: 'insensitive' } },
     ];
   }
   if (groupId) {
@@ -130,7 +130,7 @@ export default async function CustomersPage({ searchParams }: CustomersPageProps
                         <p className="font-medium">
                           {customer.firstName} {customer.lastName}
                         </p>
-                        {customer.isBusinessVerified && (
+                        {customer.isVerifiedBusiness && (
                           <span className="text-xs bg-green-100 text-green-700 px-1 rounded">
                             Verifiziert
                           </span>
@@ -140,7 +140,7 @@ export default async function CustomersPage({ searchParams }: CustomersPageProps
                   </td>
                   <td className="p-4 text-sm text-gray-600">{customer.email}</td>
                   <td className="p-4 text-sm text-gray-600">
-                    {customer.company || '-'}
+                    {customer.companyName || '-'}
                   </td>
                   <td className="p-4 text-center">
                     {customer.customerGroup && (
