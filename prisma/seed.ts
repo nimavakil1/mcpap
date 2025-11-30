@@ -33,7 +33,7 @@ async function main() {
 
   // Create admin user
   console.log('Creating admin user...');
-  const adminPassword = 'McPaper2024!Admin';
+  const adminPassword = 'General2025!';
   const adminHash = await bcrypt.hash(adminPassword, 12);
 
   await prisma.adminUser.upsert({
