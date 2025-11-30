@@ -2,7 +2,6 @@
 
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
-import Image from 'next/image';
 import { ChevronRight, Minus, Plus, Trash2, ShoppingBag, ArrowRight } from 'lucide-react';
 import toast from 'react-hot-toast';
 import Button from '@/components/ui/Button';
@@ -176,14 +175,12 @@ export default function CartPage() {
                   <div className="flex gap-4">
                     {/* Product Image */}
                     <Link href={`/produkt/${item.product.slug}`} className="flex-shrink-0">
-                      <div className="w-24 h-24 bg-[#F5F5F5] rounded relative overflow-hidden">
-                        <Image
+                      <div className="w-24 h-24 bg-[#F5F5F5] rounded overflow-hidden">
+                        <img
                           src={getImageSrc(item.product.id, primaryImage?.url)}
                           alt={primaryImage?.altText || item.product.name}
-                          fill
-                          className="object-contain p-2"
+                          className="w-full h-full object-contain p-2"
                           onError={() => handleImageError(item.product.id)}
-                          unoptimized={primaryImage?.url?.startsWith('http')}
                         />
                       </div>
                     </Link>

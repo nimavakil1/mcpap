@@ -1,5 +1,4 @@
 import Link from 'next/link';
-import Image from 'next/image';
 import { ArrowRight, Truck, CreditCard, Shield, Store } from 'lucide-react';
 import ProductCard from '@/components/shop/ProductCard';
 
@@ -260,12 +259,10 @@ export default function HomePage() {
                 className="group block bg-white rounded-lg border border-[#E0E0E0] overflow-hidden hover:shadow-md transition-shadow"
               >
                 <div className="aspect-[4/3] bg-[#F5F5F5] relative overflow-hidden">
-                  <Image
+                  <img
                     src={category.image}
                     alt={category.name}
-                    fill
-                    className="object-cover group-hover:scale-105 transition-transform"
-                    unoptimized
+                    className="absolute inset-0 w-full h-full object-cover group-hover:scale-105 transition-transform"
                   />
                 </div>
                 <div className="p-4">
@@ -382,13 +379,10 @@ export default function HomePage() {
               </Link>
             </div>
             <div className="bg-[#F5F5F5] rounded-lg p-8">
-              <Image
+              <img
                 src="https://placehold.co/500x400/F5F5F5/333?text=B2B+Vorteile"
                 alt="B2B Vorteile"
-                width={500}
-                height={400}
                 className="w-full rounded"
-                unoptimized
               />
             </div>
           </div>

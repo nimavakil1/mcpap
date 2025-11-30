@@ -2,7 +2,6 @@
 
 import { useState } from 'react';
 import Link from 'next/link';
-import Image from 'next/image';
 import { Heart, ShoppingCart } from 'lucide-react';
 import { formatPrice } from '@/lib/utils';
 import type { Product } from '@/types';
@@ -25,16 +24,11 @@ export default function ProductCard({
   isFavorite = false,
 }: ProductCardProps) {
   const primaryImage = product.images?.find((img) => img.isPrimary) || product.images?.[0];
-  const originalImageUrl = primaryImage?.url || FALLBACK_IMAGE;
-  const [imageUrl, setImageUrl] = useState(originalImageUrl);
-  const [imageError, setImageError] = useState(false);
+  const originalImageUrl = primaryImage?.url;
+  const [hasError, setHasError] = useState(false);
 
-  const handleImageError = () => {
-    if (!imageError) {
-      setImageError(true);
-      setImageUrl(FALLBACK_IMAGE);
-    }
-  };
+  // Use fallback if no URL or if there was an error loading the image
+  const imageUrl = (!originalImageUrl || hasError) ? FALLBACK_IMAGE : originalImageUrl;
 
   const basePrice = Number(product.basePrice);
   const discountedPrice = discountPercentage > 0
@@ -47,14 +41,13 @@ export default function ProductCard({
     <article className="product-card group">
       <Link href={`/produkt/${product.slug}`}>
         <div className="product-card-image">
-          <Image
+          {/* Using native img for reliable error handling */}
+          <img
             src={imageUrl}
             alt={primaryImage?.altText || product.name}
-            width={400}
-            height={400}
             className="w-full h-full object-contain p-4"
-            onError={handleImageError}
-            unoptimized={imageUrl.startsWith('http')}
+            onError={() => setHasError(true)}
+            loading="lazy"
           />
 
           {/* Badges */}

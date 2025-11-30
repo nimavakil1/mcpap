@@ -1,7 +1,6 @@
 'use client';
 
 import { useState } from 'react';
-import Image from 'next/image';
 
 const FALLBACK_IMAGE = '/images/placeholder-product.svg';
 
@@ -34,36 +33,21 @@ export default function ProductImageGallery({
 
   const getImageSrc = (image: ProductImageData | null) => {
     if (!image) return FALLBACK_IMAGE;
+    if (!image.url) return FALLBACK_IMAGE;
     if (imageErrors.has(image.id)) return FALLBACK_IMAGE;
     return image.url;
   };
 
-  const isExternal = (url: string) => url.startsWith('http');
-
   return (
     <div>
       <div className="bg-[#F5F5F5] rounded-lg aspect-square relative overflow-hidden mb-4">
-        {selectedImage ? (
-          <Image
-            src={getImageSrc(selectedImage)}
-            alt={selectedImage.altText || productName}
-            fill
-            className="object-contain p-8"
-            priority
-            onError={() => handleImageError(selectedImage.id)}
-            unoptimized={isExternal(getImageSrc(selectedImage))}
-          />
-        ) : (
-          <div className="w-full h-full flex items-center justify-center">
-            <Image
-              src={FALLBACK_IMAGE}
-              alt="Kein Bild verfügbar"
-              width={200}
-              height={200}
-              className="opacity-50"
-            />
-          </div>
-        )}
+        {/* Using native img for reliable error handling */}
+        <img
+          src={getImageSrc(selectedImage)}
+          alt={selectedImage?.altText || productName}
+          className="absolute inset-0 w-full h-full object-contain p-8"
+          onError={() => selectedImage && handleImageError(selectedImage.id)}
+        />
 
         {isStoreOnly && (
           <div className="absolute top-4 left-4 bg-[#1A1A1A] text-white px-3 py-1 rounded text-sm font-medium">
@@ -83,14 +67,11 @@ export default function ProductImageGallery({
                 selectedImage?.id === image.id ? 'border-[#E31E24]' : 'border-transparent'
               }`}
             >
-              <Image
+              <img
                 src={getImageSrc(image)}
                 alt={image.altText || ''}
-                width={80}
-                height={80}
                 className="object-contain p-1 w-full h-full"
                 onError={() => handleImageError(image.id)}
-                unoptimized={isExternal(getImageSrc(image))}
               />
             </button>
           ))}
