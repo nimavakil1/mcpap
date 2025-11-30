@@ -38,7 +38,7 @@ export default async function AccountPage() {
       where: {
         userId: session.id,
         isRedeemed: false,
-        validUntil: { gte: new Date() },
+        expiresAt: { gte: new Date() },
       },
     }),
   ]);

@@ -125,8 +125,8 @@ export async function POST(request: NextRequest) {
     if (total >= 100) {
       const voucherAmount = total >= 150 ? 10 : 5;
       const voucherCode = `FIL-${Math.random().toString(36).substring(2, 8).toUpperCase()}`;
-      const validUntil = new Date();
-      validUntil.setMonth(validUntil.getMonth() + 6);
+      const expiresAt = new Date();
+      expiresAt.setMonth(expiresAt.getMonth() + 6);
 
       await prisma.storeVoucher.create({
         data: {
@@ -134,7 +134,7 @@ export async function POST(request: NextRequest) {
           amount: voucherAmount,
           userId: user.id,
           orderId: order.id,
-          validUntil,
+          expiresAt,
         },
       });
     }
