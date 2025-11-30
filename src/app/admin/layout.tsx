@@ -92,12 +92,13 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
           sidebarOpen ? 'translate-x-0' : '-translate-x-full'
         }`}
       >
-        <div className="flex items-center justify-between p-4 border-b border-[#333]">
-          <Link href="/admin" className="flex items-center gap-2">
-            <div className="w-8 h-8 bg-[#E31E24] rounded flex items-center justify-center">
-              <span className="text-white font-bold">M</span>
-            </div>
-            <span className="text-white font-bold">Admin</span>
+        <div className="flex items-center justify-between p-4">
+          <Link href="/admin" className="flex items-center">
+            <img
+              src="https://mcpaper.de/wp-content/uploads/2025/02/mcpaper-logo.png"
+              alt="McPaper"
+              className="h-8 brightness-0 invert"
+            />
           </Link>
           <button
             className="lg:hidden text-white"
@@ -128,17 +129,17 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
           })}
         </nav>
 
-        <div className="absolute bottom-0 left-0 right-0 p-4 border-t border-gray-700">
+        <div className="absolute bottom-0 left-0 right-0 p-4">
           <button
             onClick={handleLogout}
-            className="flex items-center gap-3 px-3 py-2 w-full text-gray-100 hover:bg-gray-700 hover:text-white rounded transition-colors"
+            className="flex items-center gap-3 px-3 py-2 w-full text-white hover:bg-gray-700 rounded transition-colors"
           >
             <LogOut size={20} />
             Abmelden
           </button>
           <Link
             href="/"
-            className="flex items-center gap-3 px-3 py-2 mt-2 text-gray-100 hover:bg-gray-700 hover:text-white rounded transition-colors"
+            className="flex items-center gap-3 px-3 py-2 mt-2 text-white hover:bg-gray-700 rounded transition-colors"
           >
             Zum Shop
           </Link>
