@@ -8,6 +8,8 @@ import toast from 'react-hot-toast';
 import Button from '@/components/ui/Button';
 import { formatPrice } from '@/lib/utils';
 
+const FALLBACK_IMAGE = '/images/placeholder-product.svg';
+
 interface CartItem {
   id: string;
   quantity: number;
@@ -35,6 +37,16 @@ export default function CartPage() {
   const [cart, setCart] = useState<CartData | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [updatingItems, setUpdatingItems] = useState<Set<string>>(new Set());
+  const [imageErrors, setImageErrors] = useState<Set<string>>(new Set());
+
+  const handleImageError = (productId: string) => {
+    setImageErrors(prev => new Set(prev).add(productId));
+  };
+
+  const getImageSrc = (productId: string, url: string | undefined) => {
+    if (!url || imageErrors.has(productId)) return FALLBACK_IMAGE;
+    return url;
+  };
 
   const fetchCart = async () => {
     try {
@@ -165,18 +177,14 @@ export default function CartPage() {
                     {/* Product Image */}
                     <Link href={`/produkt/${item.product.slug}`} className="flex-shrink-0">
                       <div className="w-24 h-24 bg-[#F5F5F5] rounded relative overflow-hidden">
-                        {primaryImage ? (
-                          <Image
-                            src={primaryImage.url}
-                            alt={primaryImage.altText || item.product.name}
-                            fill
-                            className="object-contain p-2"
-                          />
-                        ) : (
-                          <div className="w-full h-full flex items-center justify-center text-[#999] text-xs">
-                            Kein Bild
-                          </div>
-                        )}
+                        <Image
+                          src={getImageSrc(item.product.id, primaryImage?.url)}
+                          alt={primaryImage?.altText || item.product.name}
+                          fill
+                          className="object-contain p-2"
+                          onError={() => handleImageError(item.product.id)}
+                          unoptimized={primaryImage?.url?.startsWith('http')}
+                        />
                       </div>
                     </Link>
 

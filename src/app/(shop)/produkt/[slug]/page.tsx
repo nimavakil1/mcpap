@@ -1,12 +1,12 @@
 import { notFound } from 'next/navigation';
 import Link from 'next/link';
-import Image from 'next/image';
-import { ChevronRight, Minus, Plus, ShoppingCart, Heart, Store, Package, Truck } from 'lucide-react';
+import { ChevronRight, Store, Package, Truck } from 'lucide-react';
 import prisma from '@/lib/db';
 import { formatPrice } from '@/lib/utils';
 import { getSession } from '@/lib/auth';
 import ProductCard from '@/components/shop/ProductCard';
 import AddToCartButton from '@/components/shop/AddToCartButton';
+import ProductImageGallery from '@/components/shop/ProductImageGallery';
 
 interface ProductPageProps {
   params: Promise<{ slug: string }>;
@@ -85,8 +85,6 @@ export default async function ProductPage({ params }: ProductPageProps) {
     ? basePrice * (1 - discountPercentage / 100)
     : basePrice;
 
-  const primaryImage = product.images.find((img) => img.isPrimary) || product.images[0];
-
   return (
     <div className="container py-6">
       {/* Breadcrumb */}
@@ -112,51 +110,11 @@ export default async function ProductPage({ params }: ProductPageProps) {
 
       <div className="grid lg:grid-cols-2 gap-8 mb-12">
         {/* Product Images */}
-        <div>
-          <div className="bg-[#F5F5F5] rounded-lg aspect-square relative overflow-hidden mb-4">
-            {primaryImage ? (
-              <Image
-                src={primaryImage.url}
-                alt={primaryImage.altText || product.name}
-                fill
-                className="object-contain p-8"
-                priority
-              />
-            ) : (
-              <div className="w-full h-full flex items-center justify-center text-[#999]">
-                Kein Bild verfügbar
-              </div>
-            )}
-
-            {isStoreOnly && (
-              <div className="absolute top-4 left-4 bg-[#1A1A1A] text-white px-3 py-1 rounded text-sm font-medium">
-                Nur in Filiale
-              </div>
-            )}
-          </div>
-
-          {/* Thumbnail Images */}
-          {product.images.length > 1 && (
-            <div className="flex gap-2 overflow-x-auto">
-              {product.images.map((image) => (
-                <button
-                  key={image.id}
-                  className={`w-20 h-20 flex-shrink-0 bg-[#F5F5F5] rounded border-2 overflow-hidden ${
-                    image.isPrimary ? 'border-[#E31E24]' : 'border-transparent'
-                  }`}
-                >
-                  <Image
-                    src={image.url}
-                    alt={image.altText || ''}
-                    width={80}
-                    height={80}
-                    className="object-contain p-1"
-                  />
-                </button>
-              ))}
-            </div>
-          )}
-        </div>
+        <ProductImageGallery
+          images={product.images}
+          productName={product.name}
+          isStoreOnly={isStoreOnly}
+        />
 
         {/* Product Info */}
         <div>

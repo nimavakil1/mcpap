@@ -265,6 +265,7 @@ export default function HomePage() {
                     alt={category.name}
                     fill
                     className="object-cover group-hover:scale-105 transition-transform"
+                    unoptimized
                   />
                 </div>
                 <div className="p-4">
@@ -387,6 +388,7 @@ export default function HomePage() {
                 width={500}
                 height={400}
                 className="w-full rounded"
+                unoptimized
               />
             </div>
           </div>

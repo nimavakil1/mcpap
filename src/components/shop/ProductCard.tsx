@@ -1,10 +1,13 @@
 'use client';
 
+import { useState } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 import { Heart, ShoppingCart } from 'lucide-react';
 import { formatPrice } from '@/lib/utils';
 import type { Product } from '@/types';
+
+const FALLBACK_IMAGE = '/images/placeholder-product.svg';
 
 interface ProductCardProps {
   product: Product;
@@ -22,7 +25,16 @@ export default function ProductCard({
   isFavorite = false,
 }: ProductCardProps) {
   const primaryImage = product.images?.find((img) => img.isPrimary) || product.images?.[0];
-  const imageUrl = primaryImage?.url || 'https://placehold.co/400x400/F5F5F5/666?text=Kein+Bild';
+  const originalImageUrl = primaryImage?.url || FALLBACK_IMAGE;
+  const [imageUrl, setImageUrl] = useState(originalImageUrl);
+  const [imageError, setImageError] = useState(false);
+
+  const handleImageError = () => {
+    if (!imageError) {
+      setImageError(true);
+      setImageUrl(FALLBACK_IMAGE);
+    }
+  };
 
   const basePrice = Number(product.basePrice);
   const discountedPrice = discountPercentage > 0
@@ -41,6 +53,8 @@ export default function ProductCard({
             width={400}
             height={400}
             className="w-full h-full object-contain p-4"
+            onError={handleImageError}
+            unoptimized={imageUrl.startsWith('http')}
           />
 
           {/* Badges */}
