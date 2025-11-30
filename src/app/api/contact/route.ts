@@ -4,7 +4,7 @@ import prisma from '@/lib/db';
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json();
-    const { name, email, phone, subject, orderNumber, message } = body;
+    const { name, email, phone, company, subject, message } = body;
 
     // Validation
     if (!name || !email || !message) {
@@ -29,10 +29,9 @@ export async function POST(request: NextRequest) {
         name,
         email,
         phone: phone || null,
-        subject,
-        orderNumber: orderNumber || null,
+        company: company || null,
+        subject: subject || 'Kontaktanfrage',
         message,
-        status: 'NEW',
       },
     });
 
