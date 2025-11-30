@@ -251,17 +251,17 @@ export default async function OrderConfirmationPage({ params }: OrderPageProps) 
                 <dd>
                   <span
                     className={`inline-block px-2 py-1 rounded text-xs font-medium ${
-                      order.paymentStatus === 'PAID'
+                      order.paymentStatus === 'paid'
                         ? 'bg-[#28A745]/10 text-[#28A745]'
-                        : order.paymentStatus === 'FAILED'
+                        : order.paymentStatus === 'failed'
                         ? 'bg-[#DC3545]/10 text-[#DC3545]'
                         : 'bg-[#FF6B00]/10 text-[#FF6B00]'
                     }`}
                   >
-                    {order.paymentStatus === 'PAID' && 'Bezahlt'}
-                    {order.paymentStatus === 'PENDING' && 'Ausstehend'}
-                    {order.paymentStatus === 'FAILED' && 'Fehlgeschlagen'}
-                    {order.paymentStatus === 'REFUNDED' && 'Erstattet'}
+                    {order.paymentStatus === 'paid' && 'Bezahlt'}
+                    {order.paymentStatus === 'pending' && 'Ausstehend'}
+                    {order.paymentStatus === 'failed' && 'Fehlgeschlagen'}
+                    {order.paymentStatus === 'refunded' && 'Erstattet'}
                   </span>
                 </dd>
               </div>
