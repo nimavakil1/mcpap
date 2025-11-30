@@ -58,7 +58,7 @@ export default async function OrdersPage({ searchParams }: OrdersPageProps) {
             firstName: true,
             lastName: true,
             email: true,
-            company: true,
+            companyName: true,
           },
         },
         items: true,
