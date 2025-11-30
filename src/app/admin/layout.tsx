@@ -15,7 +15,7 @@ const navigation = [
   { name: 'Bestellungen', href: '/admin/bestellungen', icon: ShoppingCart },
   { name: 'Kunden', href: '/admin/kunden', icon: Users },
   { name: 'Gutscheine', href: '/admin/gutscheine', icon: Gift },
-  { name: 'Import', href: '/admin/import', icon: Upload },
+  { name: 'Massen-Import', href: '/admin/bulk-import', icon: Upload },
   { name: 'Nachrichten', href: '/admin/nachrichten', icon: MessageSquare },
   { name: 'Einstellungen', href: '/admin/einstellungen', icon: Settings },
 ];
