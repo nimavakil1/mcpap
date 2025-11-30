@@ -243,7 +243,7 @@ export default function HomePage() {
             </motion.div>
 
             <h1 className="text-4xl md:text-6xl lg:text-7xl font-bold mb-6 leading-tight">
-              Ihr Partner für
+              <span className="text-amber-100">Ihr Partner für</span>
               <span className="block bg-gradient-to-r from-red-500 to-red-400 bg-clip-text text-transparent">
                 professionellen Bürobedarf
               </span>
@@ -301,8 +301,8 @@ export default function HomePage() {
       </section>
 
       {/* USP Bar */}
-      <section className="bg-white border-b border-gray-100">
-        <div className="container py-8">
+      <section className="bg-white border-y border-gray-100">
+        <div className="container py-12 my-4">
           <motion.div
             initial="hidden"
             whileInView="visible"
@@ -467,7 +467,7 @@ export default function HomePage() {
             <motion.div whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }}>
               <Link
                 href="/registrieren"
-                className="inline-flex items-center gap-2 px-8 py-4 bg-white text-red-600 font-semibold rounded-full hover:bg-gray-100 transition-colors shadow-lg"
+                className="inline-flex items-center gap-2 px-8 py-4 bg-gray-900 text-white font-semibold rounded-full hover:bg-gray-800 transition-colors shadow-lg"
               >
                 Jetzt registrieren
                 <ArrowRight size={20} />
@@ -538,7 +538,7 @@ export default function HomePage() {
               >
                 <Link
                   href="/registrieren"
-                  className="inline-flex items-center gap-2 px-8 py-4 bg-gray-900 hover:bg-gray-800 text-white font-semibold rounded-full transition-colors"
+                  className="inline-flex items-center gap-2 px-8 py-4 bg-red-600 hover:bg-red-700 text-white font-semibold rounded-full transition-colors shadow-lg shadow-red-600/25"
                 >
                   Geschäftskonto erstellen
                   <ArrowRight size={20} />
