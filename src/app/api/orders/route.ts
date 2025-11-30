@@ -19,11 +19,12 @@ export async function POST(request: NextRequest) {
     const body = await request.json();
     const { billingAddress, shippingAddress, paymentMethod, orderNote } = body;
 
-    // Get user with cart
+    // Get user with active cart
     const user = await prisma.user.findUnique({
       where: { id: session.id },
       include: {
-        cart: {
+        carts: {
+          where: { isActive: true },
           include: {
             items: {
               include: {
@@ -31,25 +32,26 @@ export async function POST(request: NextRequest) {
               },
             },
           },
+          take: 1,
         },
         customerGroup: true,
       },
     });
 
-    if (!user || !user.cart || user.cart.items.length === 0) {
+    const activeCart = user?.carts[0];
+    if (!user || !activeCart || activeCart.items.length === 0) {
       return NextResponse.json({ error: 'Warenkorb ist leer' }, { status: 400 });
     }
 
     // Calculate totals
-    const discountPercentage = user.customerGroup?.discountPercentage || 0;
+    const discountPercentage = Number(user.customerGroup?.discountPercentage || 0);
     let subtotal = 0;
 
-    for (const item of user.cart.items) {
+    for (const item of activeCart.items) {
       subtotal += Number(item.product.basePrice) * item.quantity;
     }
 
-    const discountAmount = subtotal * (discountPercentage / 100);
-    const afterDiscount = subtotal - discountAmount;
+    const afterDiscount = subtotal * (1 - discountPercentage / 100);
     const shippingCost = afterDiscount >= 50 ? 0 : 4.95;
 
     // Calculate tax (assume 19% included)
@@ -64,11 +66,10 @@ export async function POST(request: NextRequest) {
       data: {
         orderNumber,
         userId: user.id,
-        status: 'PENDING',
-        paymentStatus: paymentMethod === 'invoice' ? 'PENDING' : 'PENDING',
+        status: 'pending',
+        paymentStatus: 'pending',
         paymentMethod,
         subtotal,
-        discountAmount,
         shippingCost,
         taxAmount,
         total,
@@ -96,13 +97,10 @@ export async function POST(request: NextRequest) {
         },
         notes: orderNote || null,
         items: {
-          create: user.cart.items.map((item) => ({
+          create: activeCart.items.map((item) => ({
             productId: item.productId,
-            productName: item.product.name,
-            productSku: item.product.sku,
             quantity: item.quantity,
             unitPrice: item.product.basePrice,
-            discountPercentage,
             totalPrice: Number(item.product.basePrice) * item.quantity * (1 - discountPercentage / 100),
           })),
         },
@@ -110,7 +108,7 @@ export async function POST(request: NextRequest) {
     });
 
     // Update product stock
-    for (const item of user.cart.items) {
+    for (const item of activeCart.items) {
       await prisma.product.update({
         where: { id: item.productId },
         data: {
@@ -141,7 +139,7 @@ export async function POST(request: NextRequest) {
 
     // Clear cart
     await prisma.cartItem.deleteMany({
-      where: { cartId: user.cart.id },
+      where: { cartId: activeCart.id },
     });
 
     return NextResponse.json({
