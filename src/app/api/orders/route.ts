@@ -176,7 +176,7 @@ export async function GET(request: NextRequest) {
         where: { userId: session.id },
         include: {
           items: true,
-          vouchers: true,
+          voucher: true,
         },
         orderBy: { createdAt: 'desc' },
         skip,

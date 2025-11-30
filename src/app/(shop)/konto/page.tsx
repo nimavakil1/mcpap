@@ -136,21 +136,21 @@ export default async function AccountPage() {
                   <p className="text-xs">
                     <span
                       className={`px-2 py-0.5 rounded ${
-                        order.status === 'DELIVERED'
+                        order.status === 'delivered'
                           ? 'bg-[#28A745]/10 text-[#28A745]'
-                          : order.status === 'SHIPPED'
+                          : order.status === 'shipped'
                           ? 'bg-[#17A2B8]/10 text-[#17A2B8]'
-                          : order.status === 'CANCELLED'
+                          : order.status === 'cancelled'
                           ? 'bg-[#DC3545]/10 text-[#DC3545]'
                           : 'bg-[#FF6B00]/10 text-[#FF6B00]'
                       }`}
                     >
-                      {order.status === 'PENDING' && 'In Bearbeitung'}
-                      {order.status === 'CONFIRMED' && 'Bestätigt'}
-                      {order.status === 'PROCESSING' && 'Wird verarbeitet'}
-                      {order.status === 'SHIPPED' && 'Versendet'}
-                      {order.status === 'DELIVERED' && 'Zugestellt'}
-                      {order.status === 'CANCELLED' && 'Storniert'}
+                      {order.status === 'pending' && 'Ausstehend'}
+                      {order.status === 'paid' && 'Bezahlt'}
+                      {order.status === 'processing' && 'Wird verarbeitet'}
+                      {order.status === 'shipped' && 'Versendet'}
+                      {order.status === 'delivered' && 'Zugestellt'}
+                      {order.status === 'cancelled' && 'Storniert'}
                     </span>
                   </p>
                 </div>

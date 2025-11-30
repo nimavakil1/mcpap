@@ -12,21 +12,21 @@ interface OrdersPageProps {
 }
 
 const STATUS_LABELS: Record<string, string> = {
-  PENDING: 'Ausstehend',
-  CONFIRMED: 'Bestätigt',
-  PROCESSING: 'In Bearbeitung',
-  SHIPPED: 'Versendet',
-  DELIVERED: 'Zugestellt',
-  CANCELLED: 'Storniert',
+  pending: 'Ausstehend',
+  paid: 'Bezahlt',
+  processing: 'In Bearbeitung',
+  shipped: 'Versendet',
+  delivered: 'Zugestellt',
+  cancelled: 'Storniert',
 };
 
 const STATUS_COLORS: Record<string, string> = {
-  PENDING: 'bg-yellow-100 text-yellow-700',
-  CONFIRMED: 'bg-blue-100 text-blue-700',
-  PROCESSING: 'bg-purple-100 text-purple-700',
-  SHIPPED: 'bg-cyan-100 text-cyan-700',
-  DELIVERED: 'bg-green-100 text-green-700',
-  CANCELLED: 'bg-red-100 text-red-700',
+  pending: 'bg-yellow-100 text-yellow-700',
+  paid: 'bg-blue-100 text-blue-700',
+  processing: 'bg-purple-100 text-purple-700',
+  shipped: 'bg-cyan-100 text-cyan-700',
+  delivered: 'bg-green-100 text-green-700',
+  cancelled: 'bg-red-100 text-red-700',
 };
 
 export default async function OrdersPage({ searchParams }: OrdersPageProps) {
@@ -185,17 +185,17 @@ export default async function OrdersPage({ searchParams }: OrdersPageProps) {
                   <td className="p-4 text-center">
                     <span
                       className={`px-2 py-1 rounded text-xs font-medium ${
-                        order.paymentStatus === 'PAID'
+                        order.paymentStatus === 'paid'
                           ? 'bg-green-100 text-green-700'
-                          : order.paymentStatus === 'FAILED'
+                          : order.paymentStatus === 'failed'
                           ? 'bg-red-100 text-red-700'
                           : 'bg-yellow-100 text-yellow-700'
                       }`}
                     >
-                      {order.paymentStatus === 'PAID' && 'Bezahlt'}
-                      {order.paymentStatus === 'PENDING' && 'Ausstehend'}
-                      {order.paymentStatus === 'FAILED' && 'Fehlgeschlagen'}
-                      {order.paymentStatus === 'REFUNDED' && 'Erstattet'}
+                      {order.paymentStatus === 'paid' && 'Bezahlt'}
+                      {order.paymentStatus === 'pending' && 'Ausstehend'}
+                      {order.paymentStatus === 'failed' && 'Fehlgeschlagen'}
+                      {order.paymentStatus === 'refunded' && 'Erstattet'}
                     </span>
                   </td>
                   <td className="p-4 text-right">
