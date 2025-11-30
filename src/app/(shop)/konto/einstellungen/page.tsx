@@ -1,11 +1,8 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { Save, Loader2 } from 'lucide-react';
+import { Save, Loader2, User, MapPin, Lock, Check } from 'lucide-react';
 import toast from 'react-hot-toast';
-import Button from '@/components/ui/Button';
-import Input from '@/components/ui/Input';
-import Select from '@/components/ui/Select';
 
 interface UserData {
   firstName: string;
@@ -181,157 +178,279 @@ export default function SettingsPage() {
 
   if (isLoading) {
     return (
-      <div className="flex items-center justify-center py-12">
-        <Loader2 size={32} className="animate-spin text-[#E31E24]" />
+      <div className="flex items-center justify-center py-24">
+        <div className="text-center">
+          <Loader2 size={40} className="animate-spin text-red-600 mx-auto mb-4" />
+          <p className="text-gray-500">Laden...</p>
+        </div>
       </div>
     );
   }
 
   return (
     <div className="space-y-8">
-      <h1 className="text-2xl font-bold">Einstellungen</h1>
+      <div>
+        <h1 className="text-2xl font-bold text-gray-900">Einstellungen</h1>
+        <p className="text-gray-500 mt-1">Verwalten Sie Ihre persönlichen Daten</p>
+      </div>
 
       {/* Profile Section */}
-      <form onSubmit={handleSaveProfile} className="bg-white border border-[#E0E0E0] rounded-lg p-6">
-        <h2 className="text-lg font-bold mb-4">Persönliche Daten</h2>
-        <div className="grid md:grid-cols-2 gap-4">
-          <Input
-            label="Vorname"
-            value={userData.firstName}
-            onChange={(e) => setUserData({ ...userData, firstName: e.target.value })}
-            required
-          />
-          <Input
-            label="Nachname"
-            value={userData.lastName}
-            onChange={(e) => setUserData({ ...userData, lastName: e.target.value })}
-            required
-          />
-          <Input
-            label="E-Mail"
-            type="email"
-            value={userData.email}
-            onChange={(e) => setUserData({ ...userData, email: e.target.value })}
-            required
-          />
-          <Input
-            label="Telefon"
-            type="tel"
-            value={userData.phone}
-            onChange={(e) => setUserData({ ...userData, phone: e.target.value })}
-          />
-          <Input
-            label="Firma"
-            value={userData.companyName}
-            onChange={(e) => setUserData({ ...userData, companyName: e.target.value })}
-          />
-          <Input
-            label="USt-IdNr."
-            value={userData.taxId}
-            onChange={(e) => setUserData({ ...userData, taxId: e.target.value })}
-            placeholder="DE123456789"
-          />
+      <form onSubmit={handleSaveProfile} className="bg-white rounded-2xl border border-gray-100 overflow-hidden">
+        <div className="p-6 border-b border-gray-100 flex items-center gap-3">
+          <div className="w-10 h-10 bg-red-100 rounded-xl flex items-center justify-center">
+            <User size={20} className="text-red-600" />
+          </div>
+          <div>
+            <h2 className="text-lg font-bold text-gray-900">Persönliche Daten</h2>
+            <p className="text-sm text-gray-500">Ihre Kontaktinformationen</p>
+          </div>
         </div>
-        <div className="mt-4 flex justify-end">
-          <Button type="submit" variant="primary" isLoading={isSavingProfile}>
-            <Save size={16} className="mr-2" />
-            Speichern
-          </Button>
+        <div className="p-6">
+          <div className="grid md:grid-cols-2 gap-5">
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">Vorname</label>
+              <input
+                type="text"
+                value={userData.firstName}
+                onChange={(e) => setUserData({ ...userData, firstName: e.target.value })}
+                className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl text-gray-900 placeholder-gray-400 focus:outline-none focus:border-red-500 focus:ring-4 focus:ring-red-500/10 transition-all"
+                required
+              />
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">Nachname</label>
+              <input
+                type="text"
+                value={userData.lastName}
+                onChange={(e) => setUserData({ ...userData, lastName: e.target.value })}
+                className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl text-gray-900 placeholder-gray-400 focus:outline-none focus:border-red-500 focus:ring-4 focus:ring-red-500/10 transition-all"
+                required
+              />
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">E-Mail</label>
+              <input
+                type="email"
+                value={userData.email}
+                onChange={(e) => setUserData({ ...userData, email: e.target.value })}
+                className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl text-gray-900 placeholder-gray-400 focus:outline-none focus:border-red-500 focus:ring-4 focus:ring-red-500/10 transition-all"
+                required
+              />
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">Telefon</label>
+              <input
+                type="tel"
+                value={userData.phone}
+                onChange={(e) => setUserData({ ...userData, phone: e.target.value })}
+                className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl text-gray-900 placeholder-gray-400 focus:outline-none focus:border-red-500 focus:ring-4 focus:ring-red-500/10 transition-all"
+              />
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">Firma</label>
+              <input
+                type="text"
+                value={userData.companyName}
+                onChange={(e) => setUserData({ ...userData, companyName: e.target.value })}
+                className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl text-gray-900 placeholder-gray-400 focus:outline-none focus:border-red-500 focus:ring-4 focus:ring-red-500/10 transition-all"
+              />
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">USt-IdNr.</label>
+              <input
+                type="text"
+                value={userData.taxId}
+                onChange={(e) => setUserData({ ...userData, taxId: e.target.value })}
+                placeholder="DE123456789"
+                className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl text-gray-900 placeholder-gray-400 focus:outline-none focus:border-red-500 focus:ring-4 focus:ring-red-500/10 transition-all"
+              />
+            </div>
+          </div>
+          <div className="mt-6 flex justify-end">
+            <button
+              type="submit"
+              disabled={isSavingProfile}
+              className="inline-flex items-center gap-2 px-6 py-3 bg-red-600 text-white font-semibold rounded-xl hover:bg-red-700 transition-all disabled:opacity-50"
+            >
+              {isSavingProfile ? (
+                <Loader2 size={18} className="animate-spin" />
+              ) : (
+                <Save size={18} />
+              )}
+              Speichern
+            </button>
+          </div>
         </div>
       </form>
 
       {/* Address Section */}
-      <form onSubmit={handleSaveAddress} className="bg-white border border-[#E0E0E0] rounded-lg p-6">
-        <h2 className="text-lg font-bold mb-4">Standardadresse</h2>
-        <div className="grid md:grid-cols-2 gap-4">
-          <div className="md:col-span-2">
-            <Input
-              label="Firma (optional)"
-              value={address.company}
-              onChange={(e) => setAddress({ ...address, company: e.target.value })}
-            />
+      <form onSubmit={handleSaveAddress} className="bg-white rounded-2xl border border-gray-100 overflow-hidden">
+        <div className="p-6 border-b border-gray-100 flex items-center gap-3">
+          <div className="w-10 h-10 bg-blue-100 rounded-xl flex items-center justify-center">
+            <MapPin size={20} className="text-blue-600" />
           </div>
-          <Input
-            label="Vorname"
-            value={address.firstName}
-            onChange={(e) => setAddress({ ...address, firstName: e.target.value })}
-          />
-          <Input
-            label="Nachname"
-            value={address.lastName}
-            onChange={(e) => setAddress({ ...address, lastName: e.target.value })}
-          />
-          <div className="md:col-span-2 grid grid-cols-3 gap-4">
-            <div className="col-span-2">
-              <Input
-                label="Straße"
-                value={address.street}
-                onChange={(e) => setAddress({ ...address, street: e.target.value })}
+          <div>
+            <h2 className="text-lg font-bold text-gray-900">Standardadresse</h2>
+            <p className="text-sm text-gray-500">Ihre Liefer- und Rechnungsadresse</p>
+          </div>
+        </div>
+        <div className="p-6">
+          <div className="grid md:grid-cols-2 gap-5">
+            <div className="md:col-span-2">
+              <label className="block text-sm font-medium text-gray-700 mb-2">Firma (optional)</label>
+              <input
+                type="text"
+                value={address.company}
+                onChange={(e) => setAddress({ ...address, company: e.target.value })}
+                className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl text-gray-900 placeholder-gray-400 focus:outline-none focus:border-red-500 focus:ring-4 focus:ring-red-500/10 transition-all"
               />
             </div>
-            <Input
-              label="Nr."
-              value={address.houseNumber}
-              onChange={(e) => setAddress({ ...address, houseNumber: e.target.value })}
-            />
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">Vorname</label>
+              <input
+                type="text"
+                value={address.firstName}
+                onChange={(e) => setAddress({ ...address, firstName: e.target.value })}
+                className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl text-gray-900 placeholder-gray-400 focus:outline-none focus:border-red-500 focus:ring-4 focus:ring-red-500/10 transition-all"
+              />
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">Nachname</label>
+              <input
+                type="text"
+                value={address.lastName}
+                onChange={(e) => setAddress({ ...address, lastName: e.target.value })}
+                className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl text-gray-900 placeholder-gray-400 focus:outline-none focus:border-red-500 focus:ring-4 focus:ring-red-500/10 transition-all"
+              />
+            </div>
+            <div className="md:col-span-2 grid grid-cols-4 gap-4">
+              <div className="col-span-3">
+                <label className="block text-sm font-medium text-gray-700 mb-2">Straße</label>
+                <input
+                  type="text"
+                  value={address.street}
+                  onChange={(e) => setAddress({ ...address, street: e.target.value })}
+                  className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl text-gray-900 placeholder-gray-400 focus:outline-none focus:border-red-500 focus:ring-4 focus:ring-red-500/10 transition-all"
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">Nr.</label>
+                <input
+                  type="text"
+                  value={address.houseNumber}
+                  onChange={(e) => setAddress({ ...address, houseNumber: e.target.value })}
+                  className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl text-gray-900 placeholder-gray-400 focus:outline-none focus:border-red-500 focus:ring-4 focus:ring-red-500/10 transition-all"
+                />
+              </div>
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">PLZ</label>
+              <input
+                type="text"
+                value={address.postalCode}
+                onChange={(e) => setAddress({ ...address, postalCode: e.target.value })}
+                className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl text-gray-900 placeholder-gray-400 focus:outline-none focus:border-red-500 focus:ring-4 focus:ring-red-500/10 transition-all"
+              />
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">Stadt</label>
+              <input
+                type="text"
+                value={address.city}
+                onChange={(e) => setAddress({ ...address, city: e.target.value })}
+                className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl text-gray-900 placeholder-gray-400 focus:outline-none focus:border-red-500 focus:ring-4 focus:ring-red-500/10 transition-all"
+              />
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">Land</label>
+              <select
+                value={address.country}
+                onChange={(e) => setAddress({ ...address, country: e.target.value })}
+                className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl text-gray-900 focus:outline-none focus:border-red-500 focus:ring-4 focus:ring-red-500/10 transition-all"
+              >
+                {COUNTRIES.map((country) => (
+                  <option key={country.value} value={country.value}>
+                    {country.label}
+                  </option>
+                ))}
+              </select>
+            </div>
           </div>
-          <Input
-            label="PLZ"
-            value={address.postalCode}
-            onChange={(e) => setAddress({ ...address, postalCode: e.target.value })}
-          />
-          <Input
-            label="Stadt"
-            value={address.city}
-            onChange={(e) => setAddress({ ...address, city: e.target.value })}
-          />
-          <Select
-            label="Land"
-            value={address.country}
-            onChange={(e) => setAddress({ ...address, country: e.target.value })}
-            options={COUNTRIES}
-          />
-        </div>
-        <div className="mt-4 flex justify-end">
-          <Button type="submit" variant="primary" isLoading={isSavingAddress}>
-            <Save size={16} className="mr-2" />
-            Adresse speichern
-          </Button>
+          <div className="mt-6 flex justify-end">
+            <button
+              type="submit"
+              disabled={isSavingAddress}
+              className="inline-flex items-center gap-2 px-6 py-3 bg-red-600 text-white font-semibold rounded-xl hover:bg-red-700 transition-all disabled:opacity-50"
+            >
+              {isSavingAddress ? (
+                <Loader2 size={18} className="animate-spin" />
+              ) : (
+                <Save size={18} />
+              )}
+              Adresse speichern
+            </button>
+          </div>
         </div>
       </form>
 
       {/* Password Section */}
-      <form onSubmit={handleChangePassword} className="bg-white border border-[#E0E0E0] rounded-lg p-6">
-        <h2 className="text-lg font-bold mb-4">Passwort ändern</h2>
-        <div className="grid md:grid-cols-2 gap-4 max-w-md">
-          <div className="md:col-span-2">
-            <Input
-              label="Aktuelles Passwort"
-              type="password"
-              value={passwords.currentPassword}
-              onChange={(e) => setPasswords({ ...passwords, currentPassword: e.target.value })}
-              required
-            />
+      <form onSubmit={handleChangePassword} className="bg-white rounded-2xl border border-gray-100 overflow-hidden">
+        <div className="p-6 border-b border-gray-100 flex items-center gap-3">
+          <div className="w-10 h-10 bg-amber-100 rounded-xl flex items-center justify-center">
+            <Lock size={20} className="text-amber-600" />
           </div>
-          <Input
-            label="Neues Passwort"
-            type="password"
-            value={passwords.newPassword}
-            onChange={(e) => setPasswords({ ...passwords, newPassword: e.target.value })}
-            required
-          />
-          <Input
-            label="Passwort bestätigen"
-            type="password"
-            value={passwords.confirmPassword}
-            onChange={(e) => setPasswords({ ...passwords, confirmPassword: e.target.value })}
-            required
-          />
+          <div>
+            <h2 className="text-lg font-bold text-gray-900">Passwort ändern</h2>
+            <p className="text-sm text-gray-500">Aktualisieren Sie Ihr Passwort</p>
+          </div>
         </div>
-        <div className="mt-4 flex justify-end">
-          <Button type="submit" variant="primary" isLoading={isSavingPassword}>
-            Passwort ändern
-          </Button>
+        <div className="p-6">
+          <div className="max-w-md space-y-5">
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">Aktuelles Passwort</label>
+              <input
+                type="password"
+                value={passwords.currentPassword}
+                onChange={(e) => setPasswords({ ...passwords, currentPassword: e.target.value })}
+                className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl text-gray-900 placeholder-gray-400 focus:outline-none focus:border-red-500 focus:ring-4 focus:ring-red-500/10 transition-all"
+                required
+              />
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">Neues Passwort</label>
+              <input
+                type="password"
+                value={passwords.newPassword}
+                onChange={(e) => setPasswords({ ...passwords, newPassword: e.target.value })}
+                className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl text-gray-900 placeholder-gray-400 focus:outline-none focus:border-red-500 focus:ring-4 focus:ring-red-500/10 transition-all"
+                required
+              />
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">Passwort bestätigen</label>
+              <input
+                type="password"
+                value={passwords.confirmPassword}
+                onChange={(e) => setPasswords({ ...passwords, confirmPassword: e.target.value })}
+                className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl text-gray-900 placeholder-gray-400 focus:outline-none focus:border-red-500 focus:ring-4 focus:ring-red-500/10 transition-all"
+                required
+              />
+            </div>
+          </div>
+          <div className="mt-6 flex justify-end">
+            <button
+              type="submit"
+              disabled={isSavingPassword}
+              className="inline-flex items-center gap-2 px-6 py-3 bg-red-600 text-white font-semibold rounded-xl hover:bg-red-700 transition-all disabled:opacity-50"
+            >
+              {isSavingPassword ? (
+                <Loader2 size={18} className="animate-spin" />
+              ) : (
+                <Check size={18} />
+              )}
+              Passwort ändern
+            </button>
+          </div>
         </div>
       </form>
     </div>

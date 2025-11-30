@@ -1,10 +1,9 @@
 import { notFound, redirect } from 'next/navigation';
 import Link from 'next/link';
-import { CheckCircle, Package, Truck, Mail, Download, ChevronRight, Gift } from 'lucide-react';
+import { CheckCircle, Package, Truck, Mail, Download, ChevronRight, Gift, ArrowRight, CreditCard, MapPin, Calendar, Hash } from 'lucide-react';
 import prisma from '@/lib/db';
 import { getSession } from '@/lib/auth';
 import { formatPrice } from '@/lib/utils';
-import Button from '@/components/ui/Button';
 
 interface OrderPageProps {
   params: Promise<{ orderNumber: string }>;
@@ -80,221 +79,255 @@ export default async function OrderConfirmationPage({ params }: OrderPageProps) 
   ];
 
   return (
-    <div className="container py-6">
-      {/* Breadcrumb */}
-      <nav className="breadcrumb mb-6">
-        <Link href="/">Startseite</Link>
-        <ChevronRight size={16} className="breadcrumb-separator" />
-        <Link href="/konto/bestellungen">Meine Bestellungen</Link>
-        <ChevronRight size={16} className="breadcrumb-separator" />
-        <span className="text-[#1A1A1A] font-medium">{orderNumber}</span>
-      </nav>
+    <div className="min-h-screen bg-gray-50">
+      <div className="container py-8">
+        {/* Breadcrumb */}
+        <nav className="flex items-center gap-2 text-sm mb-8">
+          <Link href="/" className="text-gray-500 hover:text-red-600 transition-colors">
+            Startseite
+          </Link>
+          <ChevronRight size={14} className="text-gray-400" />
+          <Link href="/konto/bestellungen" className="text-gray-500 hover:text-red-600 transition-colors">
+            Meine Bestellungen
+          </Link>
+          <ChevronRight size={14} className="text-gray-400" />
+          <span className="text-gray-900 font-medium">{orderNumber}</span>
+        </nav>
 
-      {/* Success Banner */}
-      <div className="bg-[#28A745]/10 border border-[#28A745] rounded-lg p-6 mb-8 text-center">
-        <CheckCircle size={48} className="mx-auto text-[#28A745] mb-4" />
-        <h1 className="text-2xl font-bold text-[#28A745] mb-2">Vielen Dank für Ihre Bestellung!</h1>
-        <p className="text-[#666]">
-          Ihre Bestellung wurde erfolgreich aufgegeben. Sie erhalten in Kürze eine Bestätigungs-E-Mail.
-        </p>
-        <p className="mt-2 font-medium">Bestellnummer: {order.orderNumber}</p>
-      </div>
-
-      {/* Order Status */}
-      <div className="bg-white border border-[#E0E0E0] rounded-lg p-6 mb-8">
-        <h2 className="text-lg font-bold mb-6">Bestellstatus</h2>
-        <div className="flex items-center justify-between overflow-x-auto">
-          {statusSteps.map((step, index) => {
-            const StepIcon = step.icon;
-            return (
-              <div key={step.id} className="flex items-center">
-                <div className="flex flex-col items-center min-w-[80px]">
-                  <div
-                    className={`w-10 h-10 rounded-full flex items-center justify-center ${
-                      step.done ? 'bg-[#28A745] text-white' : 'bg-[#E0E0E0] text-[#666]'
-                    }`}
-                  >
-                    <StepIcon size={20} />
-                  </div>
-                  <span className={`text-xs mt-2 ${step.done ? 'text-[#28A745] font-medium' : 'text-[#666]'}`}>
-                    {step.label}
-                  </span>
-                </div>
-                {index < statusSteps.length - 1 && (
-                  <div className={`flex-1 h-0.5 mx-4 min-w-[40px] ${step.done ? 'bg-[#28A745]' : 'bg-[#E0E0E0]'}`} />
-                )}
-              </div>
-            );
-          })}
+        {/* Success Banner */}
+        <div className="bg-gradient-to-r from-green-500 to-green-600 rounded-3xl p-8 mb-8 text-white text-center">
+          <div className="w-20 h-20 bg-white/20 rounded-full flex items-center justify-center mx-auto mb-4">
+            <CheckCircle size={48} className="text-white" />
+          </div>
+          <h1 className="text-2xl md:text-3xl font-bold mb-2">Vielen Dank für Ihre Bestellung!</h1>
+          <p className="text-white/90 mb-4">
+            Ihre Bestellung wurde erfolgreich aufgegeben. Sie erhalten in Kürze eine Bestätigungs-E-Mail.
+          </p>
+          <div className="inline-flex items-center gap-2 px-4 py-2 bg-white/20 rounded-full">
+            <Hash size={16} />
+            <span className="font-medium">Bestellnummer: {order.orderNumber}</span>
+          </div>
         </div>
-      </div>
 
-      {/* Voucher if available */}
-      {order.voucher && (
-        <div className="bg-[#FF6B00]/10 border border-[#FF6B00] rounded-lg p-6 mb-8">
-          <div className="flex items-center gap-4">
-            <Gift size={40} className="text-[#FF6B00]" />
-            <div>
-              <h3 className="font-bold text-[#FF6B00]">Ihr Filialgutschein</h3>
-              <p className="text-[#666] text-sm">
-                Als Dankeschön für Ihre Bestellung erhalten Sie einen Gutschein für Ihren nächsten Einkauf in einer unserer Filialen.
-              </p>
-              <div className="mt-3 p-3 bg-white rounded border border-[#FF6B00]">
-                <p className="font-mono text-lg font-bold">{order.voucher.code}</p>
-                <p className="text-sm">
-                  Wert: <strong>{formatPrice(Number(order.voucher.amount))}</strong> |
-                  Gültig bis: {new Date(order.voucher.expiresAt).toLocaleDateString('de-DE')}
+        {/* Order Status */}
+        <div className="bg-white rounded-2xl border border-gray-100 p-6 mb-8 hover:shadow-lg hover:shadow-gray-200/50 transition-all">
+          <h2 className="text-lg font-bold text-gray-900 mb-6">Bestellstatus</h2>
+          <div className="flex items-center justify-between overflow-x-auto pb-2">
+            {statusSteps.map((step, index) => {
+              const StepIcon = step.icon;
+              return (
+                <div key={step.id} className="flex items-center">
+                  <div className="flex flex-col items-center min-w-[80px]">
+                    <div
+                      className={`w-12 h-12 rounded-2xl flex items-center justify-center ${
+                        step.done ? 'bg-green-500 text-white' : 'bg-gray-100 text-gray-400'
+                      }`}
+                    >
+                      <StepIcon size={24} />
+                    </div>
+                    <span className={`text-xs mt-2 font-medium ${step.done ? 'text-green-600' : 'text-gray-400'}`}>
+                      {step.label}
+                    </span>
+                  </div>
+                  {index < statusSteps.length - 1 && (
+                    <div className={`flex-1 h-1 mx-4 min-w-[40px] rounded-full ${step.done ? 'bg-green-500' : 'bg-gray-100'}`} />
+                  )}
+                </div>
+              );
+            })}
+          </div>
+        </div>
+
+        {/* Voucher if available */}
+        {order.voucher && (
+          <div className="bg-gradient-to-r from-amber-50 to-orange-50 rounded-2xl border border-amber-200 p-6 mb-8">
+            <div className="flex items-start gap-4">
+              <div className="w-14 h-14 bg-amber-100 rounded-2xl flex items-center justify-center flex-shrink-0">
+                <Gift size={28} className="text-amber-600" />
+              </div>
+              <div className="flex-1">
+                <h3 className="font-bold text-amber-800 mb-1">Ihr Filialgutschein</h3>
+                <p className="text-sm text-amber-700 mb-4">
+                  Als Dankeschön für Ihre Bestellung erhalten Sie einen Gutschein für Ihren nächsten Einkauf in einer unserer Filialen.
                 </p>
-              </div>
-            </div>
-          </div>
-        </div>
-      )}
-
-      <div className="grid lg:grid-cols-3 gap-8">
-        {/* Order Items */}
-        <div className="lg:col-span-2">
-          <div className="bg-white border border-[#E0E0E0] rounded-lg p-6">
-            <h2 className="text-lg font-bold mb-4">Bestellte Artikel</h2>
-            <div className="divide-y divide-[#E0E0E0]">
-              {order.items.map((item) => (
-                <div key={item.id} className="py-4 flex justify-between">
-                  <div>
-                    <p className="font-medium">{item.product.name}</p>
-                    <p className="text-sm text-[#666]">Art.-Nr.: {item.product.sku}</p>
-                    <p className="text-sm text-[#666]">
-                      {item.quantity} × {formatPrice(Number(item.unitPrice))}
-                    </p>
-                  </div>
-                  <p className="font-bold">{formatPrice(Number(item.totalPrice))}</p>
+                <div className="bg-white rounded-xl p-4 border border-amber-200 inline-block">
+                  <p className="font-mono text-2xl font-bold text-amber-800">{order.voucher.code}</p>
+                  <p className="text-sm text-amber-600 mt-1">
+                    Wert: <strong>{formatPrice(Number(order.voucher.amount))}</strong> |
+                    Gültig bis: {new Date(order.voucher.expiresAt).toLocaleDateString('de-DE')}
+                  </p>
                 </div>
-              ))}
-            </div>
-
-            <hr className="border-[#E0E0E0] my-4" />
-
-            <div className="space-y-2 text-sm">
-              <div className="flex justify-between">
-                <span className="text-[#666]">Zwischensumme</span>
-                <span>{formatPrice(Number(order.subtotal))}</span>
-              </div>
-              <div className="flex justify-between">
-                <span className="text-[#666]">Versandkosten</span>
-                <span>{Number(order.shippingCost) === 0 ? 'Kostenlos' : formatPrice(Number(order.shippingCost))}</span>
-              </div>
-              <hr className="border-[#E0E0E0]" />
-              <div className="flex justify-between text-lg font-bold">
-                <span>Gesamt</span>
-                <span className="text-[#E31E24]">{formatPrice(Number(order.total))}</span>
-              </div>
-              <p className="text-xs text-[#666]">inkl. {formatPrice(Number(order.taxAmount))} MwSt.</p>
-            </div>
-          </div>
-
-          {/* Addresses */}
-          <div className="grid md:grid-cols-2 gap-6 mt-6">
-            <div className="bg-white border border-[#E0E0E0] rounded-lg p-6">
-              <h3 className="font-bold mb-3">Rechnungsadresse</h3>
-              <div className="text-sm text-[#666]">
-                {billingAddress.company && <p>{billingAddress.company}</p>}
-                <p>{billingAddress.firstName} {billingAddress.lastName}</p>
-                <p>{billingAddress.street} {billingAddress.houseNumber}</p>
-                <p>{billingAddress.postalCode} {billingAddress.city}</p>
-                <p>{countries[billingAddress.country] || billingAddress.country}</p>
-              </div>
-            </div>
-            <div className="bg-white border border-[#E0E0E0] rounded-lg p-6">
-              <h3 className="font-bold mb-3">Lieferadresse</h3>
-              <div className="text-sm text-[#666]">
-                {shippingAddress.company && <p>{shippingAddress.company}</p>}
-                <p>{shippingAddress.firstName} {shippingAddress.lastName}</p>
-                <p>{shippingAddress.street} {shippingAddress.houseNumber}</p>
-                <p>{shippingAddress.postalCode} {shippingAddress.city}</p>
-                <p>{countries[shippingAddress.country] || shippingAddress.country}</p>
               </div>
             </div>
           </div>
-        </div>
+        )}
 
-        {/* Order Info Sidebar */}
-        <div>
-          <div className="bg-white border border-[#E0E0E0] rounded-lg p-6 sticky top-24">
-            <h2 className="text-lg font-bold mb-4">Bestellinformationen</h2>
-            <dl className="space-y-3 text-sm">
-              <div>
-                <dt className="text-[#666]">Bestellnummer</dt>
-                <dd className="font-medium">{order.orderNumber}</dd>
+        <div className="grid lg:grid-cols-3 gap-8">
+          {/* Order Items */}
+          <div className="lg:col-span-2 space-y-6">
+            <div className="bg-white rounded-2xl border border-gray-100 p-6 hover:shadow-lg hover:shadow-gray-200/50 transition-all">
+              <h2 className="text-lg font-bold text-gray-900 mb-4">Bestellte Artikel</h2>
+              <div className="divide-y divide-gray-100">
+                {order.items.map((item) => (
+                  <div key={item.id} className="py-4 flex justify-between items-start">
+                    <div>
+                      <p className="font-medium text-gray-900">{item.product.name}</p>
+                      <p className="text-sm text-gray-500">Art.-Nr.: {item.product.sku}</p>
+                      <p className="text-sm text-gray-500">
+                        {item.quantity} × {formatPrice(Number(item.unitPrice))}
+                      </p>
+                    </div>
+                    <p className="font-bold text-gray-900">{formatPrice(Number(item.totalPrice))}</p>
+                  </div>
+                ))}
               </div>
-              <div>
-                <dt className="text-[#666]">Bestelldatum</dt>
-                <dd className="font-medium">
-                  {new Date(order.createdAt).toLocaleDateString('de-DE', {
-                    day: '2-digit',
-                    month: '2-digit',
-                    year: 'numeric',
-                    hour: '2-digit',
-                    minute: '2-digit',
-                  })}
-                </dd>
-              </div>
-              <div>
-                <dt className="text-[#666]">Zahlungsart</dt>
-                <dd className="font-medium">
-                  {order.paymentMethod === 'invoice' && 'Rechnung'}
-                  {order.paymentMethod === 'card' && 'Kreditkarte'}
-                  {order.paymentMethod === 'paypal' && 'PayPal'}
-                  {order.paymentMethod === 'sepa' && 'SEPA-Lastschrift'}
-                </dd>
-              </div>
-              <div>
-                <dt className="text-[#666]">Zahlungsstatus</dt>
-                <dd>
-                  <span
-                    className={`inline-block px-2 py-1 rounded text-xs font-medium ${
-                      order.paymentStatus === 'paid'
-                        ? 'bg-[#28A745]/10 text-[#28A745]'
-                        : order.paymentStatus === 'failed'
-                        ? 'bg-[#DC3545]/10 text-[#DC3545]'
-                        : 'bg-[#FF6B00]/10 text-[#FF6B00]'
-                    }`}
-                  >
-                    {order.paymentStatus === 'paid' && 'Bezahlt'}
-                    {order.paymentStatus === 'pending' && 'Ausstehend'}
-                    {order.paymentStatus === 'failed' && 'Fehlgeschlagen'}
-                    {order.paymentStatus === 'refunded' && 'Erstattet'}
-                  </span>
-                </dd>
-              </div>
-            </dl>
 
-            {order.notes && (
-              <div className="mt-4 pt-4 border-t border-[#E0E0E0]">
-                <p className="text-sm text-[#666]">Bestellnotiz:</p>
-                <p className="text-sm">{order.notes}</p>
+              <div className="border-t border-gray-100 pt-4 mt-4 space-y-2">
+                <div className="flex justify-between text-gray-600">
+                  <span>Zwischensumme</span>
+                  <span>{formatPrice(Number(order.subtotal))}</span>
+                </div>
+                <div className="flex justify-between text-gray-600">
+                  <span>Versandkosten</span>
+                  <span>{Number(order.shippingCost) === 0 ? 'Kostenlos' : formatPrice(Number(order.shippingCost))}</span>
+                </div>
+                <div className="border-t border-gray-100 pt-2 mt-2">
+                  <div className="flex justify-between text-lg font-bold">
+                    <span>Gesamt</span>
+                    <span className="text-red-600">{formatPrice(Number(order.total))}</span>
+                  </div>
+                  <p className="text-xs text-gray-500 text-right">inkl. {formatPrice(Number(order.taxAmount))} MwSt.</p>
+                </div>
               </div>
-            )}
+            </div>
 
-            <div className="mt-6 space-y-3">
-              <Button variant="outline" className="w-full" leftIcon={<Download size={16} />}>
-                Rechnung herunterladen
-              </Button>
-              <Link href="/konto/bestellungen">
-                <Button variant="ghost" className="w-full">
+            {/* Addresses */}
+            <div className="grid md:grid-cols-2 gap-6">
+              <div className="bg-white rounded-2xl border border-gray-100 p-6 hover:shadow-lg hover:shadow-gray-200/50 transition-all">
+                <div className="flex items-center gap-2 mb-4">
+                  <MapPin size={18} className="text-red-600" />
+                  <h3 className="font-bold text-gray-900">Rechnungsadresse</h3>
+                </div>
+                <div className="text-sm text-gray-600 space-y-1">
+                  {billingAddress.company && <p className="font-medium">{billingAddress.company}</p>}
+                  <p>{billingAddress.firstName} {billingAddress.lastName}</p>
+                  <p>{billingAddress.street} {billingAddress.houseNumber}</p>
+                  <p>{billingAddress.postalCode} {billingAddress.city}</p>
+                  <p>{countries[billingAddress.country] || billingAddress.country}</p>
+                </div>
+              </div>
+              <div className="bg-white rounded-2xl border border-gray-100 p-6 hover:shadow-lg hover:shadow-gray-200/50 transition-all">
+                <div className="flex items-center gap-2 mb-4">
+                  <Truck size={18} className="text-red-600" />
+                  <h3 className="font-bold text-gray-900">Lieferadresse</h3>
+                </div>
+                <div className="text-sm text-gray-600 space-y-1">
+                  {shippingAddress.company && <p className="font-medium">{shippingAddress.company}</p>}
+                  <p>{shippingAddress.firstName} {shippingAddress.lastName}</p>
+                  <p>{shippingAddress.street} {shippingAddress.houseNumber}</p>
+                  <p>{shippingAddress.postalCode} {shippingAddress.city}</p>
+                  <p>{countries[shippingAddress.country] || shippingAddress.country}</p>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* Order Info Sidebar */}
+          <div>
+            <div className="bg-white rounded-2xl border border-gray-100 p-6 sticky top-24 hover:shadow-lg hover:shadow-gray-200/50 transition-all">
+              <h2 className="text-lg font-bold text-gray-900 mb-6">Bestellinformationen</h2>
+              <dl className="space-y-4">
+                <div className="flex items-start gap-3">
+                  <Hash size={18} className="text-gray-400 mt-0.5" />
+                  <div>
+                    <dt className="text-sm text-gray-500">Bestellnummer</dt>
+                    <dd className="font-medium text-gray-900">{order.orderNumber}</dd>
+                  </div>
+                </div>
+                <div className="flex items-start gap-3">
+                  <Calendar size={18} className="text-gray-400 mt-0.5" />
+                  <div>
+                    <dt className="text-sm text-gray-500">Bestelldatum</dt>
+                    <dd className="font-medium text-gray-900">
+                      {new Date(order.createdAt).toLocaleDateString('de-DE', {
+                        day: '2-digit',
+                        month: '2-digit',
+                        year: 'numeric',
+                        hour: '2-digit',
+                        minute: '2-digit',
+                      })}
+                    </dd>
+                  </div>
+                </div>
+                <div className="flex items-start gap-3">
+                  <CreditCard size={18} className="text-gray-400 mt-0.5" />
+                  <div>
+                    <dt className="text-sm text-gray-500">Zahlungsart</dt>
+                    <dd className="font-medium text-gray-900">
+                      {order.paymentMethod === 'invoice' && 'Rechnung'}
+                      {order.paymentMethod === 'card' && 'Kreditkarte'}
+                      {order.paymentMethod === 'paypal' && 'PayPal'}
+                      {order.paymentMethod === 'sepa' && 'SEPA-Lastschrift'}
+                    </dd>
+                  </div>
+                </div>
+                <div className="flex items-start gap-3">
+                  <CheckCircle size={18} className="text-gray-400 mt-0.5" />
+                  <div>
+                    <dt className="text-sm text-gray-500">Zahlungsstatus</dt>
+                    <dd>
+                      <span
+                        className={`inline-block px-3 py-1 rounded-full text-xs font-semibold ${
+                          order.paymentStatus === 'paid'
+                            ? 'bg-green-100 text-green-700'
+                            : order.paymentStatus === 'failed'
+                            ? 'bg-red-100 text-red-700'
+                            : 'bg-amber-100 text-amber-700'
+                        }`}
+                      >
+                        {order.paymentStatus === 'paid' && 'Bezahlt'}
+                        {order.paymentStatus === 'pending' && 'Ausstehend'}
+                        {order.paymentStatus === 'failed' && 'Fehlgeschlagen'}
+                        {order.paymentStatus === 'refunded' && 'Erstattet'}
+                      </span>
+                    </dd>
+                  </div>
+                </div>
+              </dl>
+
+              {order.notes && (
+                <div className="mt-6 pt-6 border-t border-gray-100">
+                  <p className="text-sm text-gray-500 mb-1">Bestellnotiz:</p>
+                  <p className="text-sm text-gray-900">{order.notes}</p>
+                </div>
+              )}
+
+              <div className="mt-6 space-y-3">
+                <button className="w-full inline-flex items-center justify-center gap-2 px-4 py-3 border border-gray-200 text-gray-700 font-medium rounded-xl hover:bg-gray-50 transition-all">
+                  <Download size={18} />
+                  Rechnung herunterladen
+                </button>
+                <Link
+                  href="/konto/bestellungen"
+                  className="w-full inline-flex items-center justify-center gap-2 px-4 py-3 text-gray-600 font-medium rounded-xl hover:bg-gray-100 transition-all"
+                >
                   Alle Bestellungen ansehen
-                </Button>
-              </Link>
+                </Link>
+              </div>
             </div>
           </div>
         </div>
-      </div>
 
-      {/* Continue Shopping */}
-      <div className="text-center mt-12">
-        <Link href="/kategorie/schreibwaren">
-          <Button variant="primary" size="lg">
+        {/* Continue Shopping */}
+        <div className="text-center mt-12">
+          <Link
+            href="/kategorie/schreibwaren"
+            className="inline-flex items-center gap-2 px-8 py-4 bg-red-600 hover:bg-red-700 text-white font-semibold rounded-full transition-all"
+          >
             Weiter einkaufen
-          </Button>
-        </Link>
+            <ArrowRight size={18} />
+          </Link>
+        </div>
       </div>
     </div>
   );

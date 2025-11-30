@@ -1,6 +1,6 @@
 import { notFound } from 'next/navigation';
 import Link from 'next/link';
-import { ChevronRight, Store, Package, Truck } from 'lucide-react';
+import { ChevronRight, Store, Package, Truck, Shield, RotateCcw, CheckCircle2 } from 'lucide-react';
 import prisma from '@/lib/db';
 import { formatPrice } from '@/lib/utils';
 import { getSession } from '@/lib/auth';
@@ -86,186 +86,258 @@ export default async function ProductPage({ params }: ProductPageProps) {
     : basePrice;
 
   return (
-    <div className="container py-6">
-      {/* Breadcrumb */}
-      <nav className="breadcrumb mb-6">
-        <Link href="/">Startseite</Link>
-        <ChevronRight size={16} className="breadcrumb-separator" />
-        {product.category?.parent && (
-          <>
-            <Link href={`/kategorie/${product.category.parent.slug}`}>
-              {product.category.parent.name}
+    <div className="min-h-screen bg-gray-50">
+      {/* Breadcrumb Header */}
+      <div className="bg-white border-b border-gray-100">
+        <div className="container py-4">
+          <nav className="flex items-center gap-2 text-sm text-gray-500">
+            <Link href="/" className="hover:text-red-600 transition-colors">
+              Startseite
             </Link>
-            <ChevronRight size={16} className="breadcrumb-separator" />
-          </>
-        )}
-        {product.category && (
-          <>
-            <Link href={`/kategorie/${product.category.slug}`}>{product.category.name}</Link>
-            <ChevronRight size={16} className="breadcrumb-separator" />
-          </>
-        )}
-        <span className="text-[#1A1A1A] font-medium">{product.name}</span>
-      </nav>
-
-      <div className="grid lg:grid-cols-2 gap-8 mb-12">
-        {/* Product Images */}
-        <ProductImageGallery
-          images={product.images}
-          productName={product.name}
-          isStoreOnly={isStoreOnly}
-        />
-
-        {/* Product Info */}
-        <div>
-          {product.manufacturer && (
-            <p className="text-sm text-[#999] uppercase tracking-wide mb-1">
-              {product.manufacturer}
-            </p>
-          )}
-
-          <h1 className="text-2xl md:text-3xl font-bold mb-4">{product.name}</h1>
-
-          {product.shortDescription && (
-            <p className="text-[#666] mb-4">{product.shortDescription}</p>
-          )}
-
-          <div className="flex items-center gap-4 mb-4">
-            <span className="text-sm text-[#666]">Art.-Nr.: {product.sku}</span>
-            {product.ean && <span className="text-sm text-[#666]">EAN: {product.ean}</span>}
-          </div>
-
-          {/* Price */}
-          <div className="bg-[#F5F5F5] rounded-lg p-6 mb-6">
-            {isStoreOnly ? (
-              <div className="flex items-center gap-3 text-[#666]">
-                <Store size={24} />
-                <div>
-                  <p className="font-semibold">Nur in der Filiale erhältlich</p>
-                  <p className="text-sm">
-                    Dieses Produkt ist nicht online verfügbar. Besuchen Sie eine unserer Filialen.
-                  </p>
-                </div>
-              </div>
-            ) : (
+            <ChevronRight size={14} className="text-gray-300" />
+            {product.category?.parent && (
               <>
-                <div className="flex items-baseline gap-3 mb-4">
-                  <span className="text-3xl font-bold text-[#E31E24]">
-                    {formatPrice(discountedPrice)}
-                  </span>
-                  {discountPercentage > 0 && (
-                    <>
-                      <span className="text-lg text-[#999] line-through">
-                        {formatPrice(basePrice)}
-                      </span>
-                      <span className="bg-[#E31E24] text-white text-sm px-2 py-1 rounded">
-                        -{discountPercentage}%
-                      </span>
-                    </>
-                  )}
-                </div>
-
-                <p className="text-sm text-[#666] mb-4">
-                  inkl. {Number(product.taxRate)}% MwSt., zzgl. Versandkosten
-                </p>
-
-                {/* Stock Status */}
-                {product.stockQuantity > 0 ? (
-                  <p className="text-sm text-[#28A745] mb-4 flex items-center gap-2">
-                    <span className="w-2 h-2 bg-[#28A745] rounded-full"></span>
-                    Auf Lager
-                    {product.stockQuantity <= 5 && ` (nur noch ${product.stockQuantity} verfügbar)`}
-                  </p>
-                ) : (
-                  <p className="text-sm text-[#DC3545] mb-4 flex items-center gap-2">
-                    <span className="w-2 h-2 bg-[#DC3545] rounded-full"></span>
-                    Derzeit nicht verfügbar
-                  </p>
-                )}
-
-                {/* Add to Cart */}
-                <AddToCartButton
-                  productId={product.id}
-                  productName={product.name}
-                  minQuantity={product.minimumOrderQuantity}
-                  maxQuantity={product.stockQuantity}
-                  disabled={product.stockQuantity === 0}
-                />
+                <Link
+                  href={`/kategorie/${product.category.parent.slug}`}
+                  className="hover:text-red-600 transition-colors"
+                >
+                  {product.category.parent.name}
+                </Link>
+                <ChevronRight size={14} className="text-gray-300" />
               </>
             )}
-          </div>
-
-          {/* USPs */}
-          <div className="grid grid-cols-2 gap-4">
-            <div className="flex items-center gap-2 text-sm">
-              <Truck size={18} className="text-[#E31E24]" />
-              Lieferzeit 2-3 Werktage
-            </div>
-            <div className="flex items-center gap-2 text-sm">
-              <Package size={18} className="text-[#E31E24]" />
-              Kostenloser Versand ab 50€
-            </div>
-          </div>
+            {product.category && (
+              <>
+                <Link
+                  href={`/kategorie/${product.category.slug}`}
+                  className="hover:text-red-600 transition-colors"
+                >
+                  {product.category.name}
+                </Link>
+                <ChevronRight size={14} className="text-gray-300" />
+              </>
+            )}
+            <span className="text-gray-900 font-medium truncate max-w-[200px]">
+              {product.name}
+            </span>
+          </nav>
         </div>
       </div>
 
-      {/* Product Details */}
-      <div className="grid lg:grid-cols-3 gap-8 mb-12">
-        {/* Description */}
-        <div className="lg:col-span-2">
-          <h2 className="text-xl font-bold mb-4">Produktbeschreibung</h2>
-          <div className="prose max-w-none text-[#666]">
-            {product.description || product.shortDescription || 'Keine Beschreibung verfügbar.'}
+      <div className="container py-8">
+        <div className="grid lg:grid-cols-2 gap-8 lg:gap-12 mb-16">
+          {/* Product Images */}
+          <div className="bg-white rounded-2xl border border-gray-100 p-6 lg:p-8">
+            <ProductImageGallery
+              images={product.images}
+              productName={product.name}
+              isStoreOnly={isStoreOnly}
+            />
+          </div>
+
+          {/* Product Info */}
+          <div>
+            {product.manufacturer && (
+              <Link
+                href={`/suche?manufacturer=${encodeURIComponent(product.manufacturer)}`}
+                className="inline-block text-sm text-gray-400 uppercase tracking-wider font-medium mb-2 hover:text-red-600 transition-colors"
+              >
+                {product.manufacturer}
+              </Link>
+            )}
+
+            <h1 className="text-2xl md:text-3xl lg:text-4xl font-bold text-gray-900 mb-4 leading-tight">
+              {product.name}
+            </h1>
+
+            {product.shortDescription && (
+              <p className="text-gray-600 text-lg mb-6">{product.shortDescription}</p>
+            )}
+
+            <div className="flex flex-wrap items-center gap-4 mb-6">
+              <span className="text-sm text-gray-500 bg-gray-100 px-3 py-1 rounded-full">
+                Art.-Nr.: {product.sku}
+              </span>
+              {product.ean && (
+                <span className="text-sm text-gray-500 bg-gray-100 px-3 py-1 rounded-full">
+                  EAN: {product.ean}
+                </span>
+              )}
+            </div>
+
+            {/* Price Card */}
+            <div className="bg-white rounded-2xl border border-gray-100 p-6 mb-6">
+              {isStoreOnly ? (
+                <div className="flex items-start gap-4">
+                  <div className="w-12 h-12 bg-gray-100 rounded-xl flex items-center justify-center flex-shrink-0">
+                    <Store size={24} className="text-gray-600" />
+                  </div>
+                  <div>
+                    <p className="font-semibold text-gray-900 mb-1">
+                      Nur in der Filiale erhältlich
+                    </p>
+                    <p className="text-sm text-gray-500">
+                      Dieses Produkt ist nicht online verfügbar. Besuchen Sie eine unserer Filialen.
+                    </p>
+                    <Link
+                      href="/filialen"
+                      className="inline-flex items-center gap-2 mt-3 text-red-600 text-sm font-medium hover:text-red-700 transition-colors"
+                    >
+                      Filiale finden
+                      <ChevronRight size={16} />
+                    </Link>
+                  </div>
+                </div>
+              ) : (
+                <>
+                  <div className="flex items-baseline gap-3 mb-2">
+                    <span className="text-4xl font-bold text-gray-900">
+                      {formatPrice(discountedPrice)}
+                    </span>
+                    {discountPercentage > 0 && (
+                      <>
+                        <span className="text-xl text-gray-400 line-through">
+                          {formatPrice(basePrice)}
+                        </span>
+                        <span className="px-2.5 py-1 bg-red-600 text-white text-sm font-bold rounded-full">
+                          -{discountPercentage}%
+                        </span>
+                      </>
+                    )}
+                  </div>
+
+                  <p className="text-sm text-gray-500 mb-4">
+                    inkl. {Number(product.taxRate)}% MwSt., zzgl. Versandkosten
+                  </p>
+
+                  {/* Stock Status */}
+                  {product.stockQuantity > 0 ? (
+                    <div className="flex items-center gap-2 mb-6">
+                      <span className="w-2.5 h-2.5 bg-green-500 rounded-full animate-pulse"></span>
+                      <span className="text-sm font-medium text-green-600">
+                        Auf Lager
+                        {product.stockQuantity <= 5 && (
+                          <span className="text-amber-600 ml-1">
+                            (nur noch {product.stockQuantity} verfügbar)
+                          </span>
+                        )}
+                      </span>
+                    </div>
+                  ) : (
+                    <div className="flex items-center gap-2 mb-6">
+                      <span className="w-2.5 h-2.5 bg-red-500 rounded-full"></span>
+                      <span className="text-sm font-medium text-red-600">
+                        Derzeit nicht verfügbar
+                      </span>
+                    </div>
+                  )}
+
+                  {/* Add to Cart */}
+                  <AddToCartButton
+                    productId={product.id}
+                    productName={product.name}
+                    minQuantity={product.minimumOrderQuantity}
+                    maxQuantity={product.stockQuantity}
+                    disabled={product.stockQuantity === 0}
+                  />
+                </>
+              )}
+            </div>
+
+            {/* Trust Badges */}
+            <div className="grid grid-cols-2 gap-4">
+              {[
+                { icon: Truck, text: 'Lieferzeit 2-3 Werktage' },
+                { icon: Package, text: 'Kostenloser Versand ab 50€' },
+                { icon: Shield, text: 'Sichere Zahlung' },
+                { icon: RotateCcw, text: '14 Tage Rückgaberecht' },
+              ].map((item, index) => (
+                <div
+                  key={index}
+                  className="flex items-center gap-3 p-3 bg-white rounded-xl border border-gray-100"
+                >
+                  <item.icon size={18} className="text-red-600 flex-shrink-0" />
+                  <span className="text-sm text-gray-700">{item.text}</span>
+                </div>
+              ))}
+            </div>
           </div>
         </div>
 
-        {/* Attributes */}
-        {product.attributes.length > 0 && (
+        {/* Product Details */}
+        <div className="grid lg:grid-cols-3 gap-8 mb-16">
+          {/* Description */}
+          <div className="lg:col-span-2">
+            <div className="bg-white rounded-2xl border border-gray-100 p-6 lg:p-8">
+              <h2 className="text-xl font-bold text-gray-900 mb-6">Produktbeschreibung</h2>
+              <div className="prose prose-gray max-w-none">
+                <p className="text-gray-600 leading-relaxed">
+                  {product.description || product.shortDescription || 'Keine Beschreibung verfügbar.'}
+                </p>
+              </div>
+            </div>
+          </div>
+
+          {/* Attributes */}
           <div>
-            <h2 className="text-xl font-bold mb-4">Spezifikationen</h2>
-            <table className="w-full text-sm">
-              <tbody>
-                {product.attributes.map((attr) => (
-                  <tr key={attr.id} className="border-b border-[#E0E0E0]">
-                    <td className="py-2 text-[#666]">{attr.name}</td>
-                    <td className="py-2 font-medium text-right">{attr.value}</td>
-                  </tr>
+            <div className="bg-white rounded-2xl border border-gray-100 p-6 lg:p-8">
+              <h2 className="text-xl font-bold text-gray-900 mb-6">Spezifikationen</h2>
+              <div className="space-y-3">
+                {product.attributes.map((attr: { id: string; name: string; value: string }) => (
+                  <div
+                    key={attr.id}
+                    className="flex justify-between items-center py-2 border-b border-gray-100 last:border-0"
+                  >
+                    <span className="text-sm text-gray-500">{attr.name}</span>
+                    <span className="text-sm font-medium text-gray-900">{attr.value}</span>
+                  </div>
                 ))}
-                <tr className="border-b border-[#E0E0E0]">
-                  <td className="py-2 text-[#666]">Einheit</td>
-                  <td className="py-2 font-medium text-right">{product.unitOfMeasure}</td>
-                </tr>
+                <div className="flex justify-between items-center py-2 border-b border-gray-100">
+                  <span className="text-sm text-gray-500">Einheit</span>
+                  <span className="text-sm font-medium text-gray-900">{product.unitOfMeasure}</span>
+                </div>
                 {product.unitsPerPackage && (
-                  <tr className="border-b border-[#E0E0E0]">
-                    <td className="py-2 text-[#666]">Inhalt</td>
-                    <td className="py-2 font-medium text-right">
+                  <div className="flex justify-between items-center py-2 border-b border-gray-100">
+                    <span className="text-sm text-gray-500">Inhalt</span>
+                    <span className="text-sm font-medium text-gray-900">
                       {product.unitsPerPackage} Stück
-                    </td>
-                  </tr>
+                    </span>
+                  </div>
                 )}
                 {product.weightGrams && (
-                  <tr className="border-b border-[#E0E0E0]">
-                    <td className="py-2 text-[#666]">Gewicht</td>
-                    <td className="py-2 font-medium text-right">{product.weightGrams}g</td>
-                  </tr>
+                  <div className="flex justify-between items-center py-2">
+                    <span className="text-sm text-gray-500">Gewicht</span>
+                    <span className="text-sm font-medium text-gray-900">{product.weightGrams}g</span>
+                  </div>
                 )}
-              </tbody>
-            </table>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Related Products */}
+        {relatedProducts.length > 0 && (
+          <div>
+            <div className="flex items-center justify-between mb-8">
+              <h2 className="text-2xl font-bold text-gray-900">Ähnliche Produkte</h2>
+              {product.category && (
+                <Link
+                  href={`/kategorie/${product.category.slug}`}
+                  className="text-red-600 hover:text-red-700 font-medium text-sm flex items-center gap-1 transition-colors"
+                >
+                  Alle anzeigen
+                  <ChevronRight size={16} />
+                </Link>
+              )}
+            </div>
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-6">
+              {relatedProducts.map((relProduct: any) => (
+                <ProductCard key={relProduct.id} product={relProduct} />
+              ))}
+            </div>
           </div>
         )}
       </div>
-
-      {/* Related Products */}
-      {relatedProducts.length > 0 && (
-        <div>
-          <h2 className="text-xl font-bold mb-6">Ähnliche Produkte</h2>
-          <div className="product-grid">
-            {relatedProducts.map((relProduct) => (
-              <ProductCard key={relProduct.id} product={relProduct as any} />
-            ))}
-          </div>
-        </div>
-      )}
     </div>
   );
 }

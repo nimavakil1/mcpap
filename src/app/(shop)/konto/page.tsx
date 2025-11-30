@@ -1,5 +1,5 @@
 import Link from 'next/link';
-import { Package, Heart, ShoppingBag, Gift, ArrowRight } from 'lucide-react';
+import { Package, Heart, ShoppingBag, Gift, ArrowRight, TrendingUp } from 'lucide-react';
 import prisma from '@/lib/db';
 import { getSession } from '@/lib/auth';
 import { formatPrice } from '@/lib/utils';
@@ -49,110 +49,124 @@ export default async function AccountPage() {
 
   return (
     <div className="space-y-6">
-      <div>
-        <h1 className="text-2xl font-bold mb-2">
-          Willkommen, {user.firstName}!
+      {/* Welcome Banner */}
+      <div className="bg-gradient-to-r from-red-600 to-red-700 rounded-2xl p-8 text-white">
+        <h1 className="text-2xl md:text-3xl font-bold mb-2">
+          Willkommen zurück, {user.firstName}!
         </h1>
-        <p className="text-[#666]">
+        <p className="text-red-100">
           Hier finden Sie eine Übersicht Ihres Kontos und Ihrer letzten Aktivitäten.
         </p>
       </div>
 
       {/* Quick Stats */}
-      <div className="grid md:grid-cols-4 gap-4">
-        <Link
-          href="/konto/bestellungen"
-          className="bg-white border border-[#E0E0E0] rounded-lg p-4 hover:border-[#E31E24] transition-colors"
-        >
-          <Package size={24} className="text-[#E31E24] mb-2" />
-          <p className="text-2xl font-bold">{recentOrders.length}</p>
-          <p className="text-sm text-[#666]">Bestellungen</p>
-        </Link>
-        <Link
-          href="/konto/favoriten"
-          className="bg-white border border-[#E0E0E0] rounded-lg p-4 hover:border-[#E31E24] transition-colors"
-        >
-          <Heart size={24} className="text-[#E31E24] mb-2" />
-          <p className="text-2xl font-bold">{favoriteCount}</p>
-          <p className="text-sm text-[#666]">Favoriten</p>
-        </Link>
-        <Link
-          href="/konto/gespeicherte-warenkoerbe"
-          className="bg-white border border-[#E0E0E0] rounded-lg p-4 hover:border-[#E31E24] transition-colors"
-        >
-          <ShoppingBag size={24} className="text-[#E31E24] mb-2" />
-          <p className="text-2xl font-bold">0</p>
-          <p className="text-sm text-[#666]">Gespeicherte Warenkörbe</p>
-        </Link>
-        <div className="bg-white border border-[#E0E0E0] rounded-lg p-4">
-          <Gift size={24} className="text-[#FF6B00] mb-2" />
-          <p className="text-2xl font-bold">{voucherCount}</p>
-          <p className="text-sm text-[#666]">Filialgutscheine</p>
-        </div>
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+        {[
+          { href: '/konto/bestellungen', icon: Package, value: recentOrders.length, label: 'Bestellungen', color: 'red' },
+          { href: '/konto/favoriten', icon: Heart, value: favoriteCount, label: 'Favoriten', color: 'pink' },
+          { href: '/konto/gespeicherte-warenkoerbe', icon: ShoppingBag, value: 0, label: 'Warenkörbe', color: 'blue' },
+          { href: '#', icon: Gift, value: voucherCount, label: 'Gutscheine', color: 'amber' },
+        ].map((stat, index) => (
+          <Link
+            key={index}
+            href={stat.href}
+            className="bg-white rounded-2xl border border-gray-100 p-5 hover:shadow-lg hover:shadow-gray-200/50 hover:border-gray-200 transition-all group"
+          >
+            <div className={`w-12 h-12 rounded-xl flex items-center justify-center mb-3 ${
+              stat.color === 'red' ? 'bg-red-100' :
+              stat.color === 'pink' ? 'bg-pink-100' :
+              stat.color === 'blue' ? 'bg-blue-100' : 'bg-amber-100'
+            }`}>
+              <stat.icon size={22} className={
+                stat.color === 'red' ? 'text-red-600' :
+                stat.color === 'pink' ? 'text-pink-600' :
+                stat.color === 'blue' ? 'text-blue-600' : 'text-amber-600'
+              } />
+            </div>
+            <p className="text-3xl font-bold text-gray-900">{stat.value}</p>
+            <p className="text-sm text-gray-500">{stat.label}</p>
+          </Link>
+        ))}
       </div>
 
       {/* Customer Group Info */}
       {user.customerGroup && Number(user.customerGroup.discountPercentage) > 0 && (
-        <div className="bg-[#28A745]/10 border border-[#28A745] rounded-lg p-4">
-          <p className="font-medium text-[#28A745]">
-            Als {user.customerGroup.name}-Kunde erhalten Sie {Number(user.customerGroup.discountPercentage)}% Rabatt auf alle Produkte!
-          </p>
+        <div className="bg-green-50 border border-green-100 rounded-2xl p-5 flex items-center gap-4">
+          <div className="w-12 h-12 bg-green-100 rounded-xl flex items-center justify-center">
+            <TrendingUp size={22} className="text-green-600" />
+          </div>
+          <div>
+            <p className="font-semibold text-green-800">
+              {user.customerGroup.name}-Kunde
+            </p>
+            <p className="text-sm text-green-700">
+              Sie erhalten {Number(user.customerGroup.discountPercentage)}% Rabatt auf alle Produkte!
+            </p>
+          </div>
         </div>
       )}
 
       {/* Recent Orders */}
-      <div className="bg-white border border-[#E0E0E0] rounded-lg p-6">
-        <div className="flex items-center justify-between mb-4">
-          <h2 className="text-lg font-bold">Letzte Bestellungen</h2>
-          <Link href="/konto/bestellungen" className="text-[#E31E24] hover:underline text-sm flex items-center gap-1">
+      <div className="bg-white rounded-2xl border border-gray-100 overflow-hidden">
+        <div className="p-6 border-b border-gray-100 flex items-center justify-between">
+          <h2 className="text-xl font-bold text-gray-900">Letzte Bestellungen</h2>
+          <Link
+            href="/konto/bestellungen"
+            className="text-red-600 hover:text-red-700 text-sm font-medium flex items-center gap-1 transition-colors"
+          >
             Alle anzeigen <ArrowRight size={14} />
           </Link>
         </div>
 
         {recentOrders.length === 0 ? (
-          <div className="text-center py-8">
-            <Package size={40} className="mx-auto text-[#999] mb-3" />
-            <p className="text-[#666]">Sie haben noch keine Bestellungen.</p>
-            <Link href="/kategorie/schreibwaren" className="text-[#E31E24] hover:underline mt-2 inline-block">
+          <div className="p-12 text-center">
+            <div className="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
+              <Package size={28} className="text-gray-400" />
+            </div>
+            <p className="text-gray-900 font-semibold mb-2">Keine Bestellungen vorhanden</p>
+            <p className="text-gray-500 mb-6">Sie haben noch keine Bestellungen aufgegeben.</p>
+            <Link
+              href="/kategorie/schreibwaren"
+              className="inline-flex items-center gap-2 px-6 py-3 bg-red-600 text-white font-semibold rounded-full hover:bg-red-700 transition-all"
+            >
               Jetzt stöbern
+              <ArrowRight size={16} />
             </Link>
           </div>
         ) : (
-          <div className="divide-y divide-[#E0E0E0]">
+          <div className="divide-y divide-gray-100">
             {recentOrders.map((order) => (
               <Link
                 key={order.id}
                 href={`/bestellung/${order.orderNumber}`}
-                className="py-4 flex items-center justify-between hover:bg-[#F5F5F5] -mx-4 px-4 transition-colors"
+                className="p-5 flex items-center justify-between hover:bg-gray-50 transition-colors"
               >
                 <div>
-                  <p className="font-medium">{order.orderNumber}</p>
-                  <p className="text-sm text-[#666]">
+                  <p className="font-semibold text-gray-900">{order.orderNumber}</p>
+                  <p className="text-sm text-gray-500">
                     {new Date(order.createdAt).toLocaleDateString('de-DE')} · {order.items.length} Artikel
                   </p>
                 </div>
                 <div className="text-right">
-                  <p className="font-bold text-[#E31E24]">{formatPrice(Number(order.total))}</p>
-                  <p className="text-xs">
-                    <span
-                      className={`px-2 py-0.5 rounded ${
-                        order.status === 'delivered'
-                          ? 'bg-[#28A745]/10 text-[#28A745]'
-                          : order.status === 'shipped'
-                          ? 'bg-[#17A2B8]/10 text-[#17A2B8]'
-                          : order.status === 'cancelled'
-                          ? 'bg-[#DC3545]/10 text-[#DC3545]'
-                          : 'bg-[#FF6B00]/10 text-[#FF6B00]'
-                      }`}
-                    >
-                      {order.status === 'pending' && 'Ausstehend'}
-                      {order.status === 'paid' && 'Bezahlt'}
-                      {order.status === 'processing' && 'Wird verarbeitet'}
-                      {order.status === 'shipped' && 'Versendet'}
-                      {order.status === 'delivered' && 'Zugestellt'}
-                      {order.status === 'cancelled' && 'Storniert'}
-                    </span>
-                  </p>
+                  <p className="font-bold text-gray-900">{formatPrice(Number(order.total))}</p>
+                  <span
+                    className={`inline-block px-3 py-1 rounded-full text-xs font-medium ${
+                      order.status === 'delivered'
+                        ? 'bg-green-100 text-green-700'
+                        : order.status === 'shipped'
+                        ? 'bg-blue-100 text-blue-700'
+                        : order.status === 'cancelled'
+                        ? 'bg-red-100 text-red-700'
+                        : 'bg-amber-100 text-amber-700'
+                    }`}
+                  >
+                    {order.status === 'pending' && 'Ausstehend'}
+                    {order.status === 'paid' && 'Bezahlt'}
+                    {order.status === 'processing' && 'In Bearbeitung'}
+                    {order.status === 'shipped' && 'Versendet'}
+                    {order.status === 'delivered' && 'Zugestellt'}
+                    {order.status === 'cancelled' && 'Storniert'}
+                  </span>
                 </div>
               </Link>
             ))}
@@ -160,48 +174,56 @@ export default async function AccountPage() {
         )}
       </div>
 
-      {/* Account Info */}
+      {/* Account Info Grid */}
       <div className="grid md:grid-cols-2 gap-6">
-        <div className="bg-white border border-[#E0E0E0] rounded-lg p-6">
-          <h2 className="text-lg font-bold mb-4">Kontoinformationen</h2>
-          <dl className="space-y-2 text-sm">
+        {/* Personal Info */}
+        <div className="bg-white rounded-2xl border border-gray-100 p-6">
+          <h2 className="text-lg font-bold text-gray-900 mb-4">Kontoinformationen</h2>
+          <dl className="space-y-3">
             <div className="flex justify-between">
-              <dt className="text-[#666]">Name</dt>
-              <dd>{user.firstName} {user.lastName}</dd>
+              <dt className="text-gray-500">Name</dt>
+              <dd className="font-medium text-gray-900">{user.firstName} {user.lastName}</dd>
             </div>
             <div className="flex justify-between">
-              <dt className="text-[#666]">E-Mail</dt>
-              <dd>{user.email}</dd>
+              <dt className="text-gray-500">E-Mail</dt>
+              <dd className="font-medium text-gray-900 truncate ml-4">{user.email}</dd>
             </div>
             {user.companyName && (
               <div className="flex justify-between">
-                <dt className="text-[#666]">Firma</dt>
-                <dd>{user.companyName}</dd>
+                <dt className="text-gray-500">Firma</dt>
+                <dd className="font-medium text-gray-900">{user.companyName}</dd>
               </div>
             )}
             <div className="flex justify-between">
-              <dt className="text-[#666]">Kundengruppe</dt>
-              <dd>{user.customerGroup?.name || 'Standard'}</dd>
+              <dt className="text-gray-500">Kundengruppe</dt>
+              <dd className="font-medium text-gray-900">{user.customerGroup?.name || 'Standard'}</dd>
             </div>
           </dl>
-          <Link href="/konto/einstellungen" className="text-[#E31E24] hover:underline text-sm mt-4 block">
-            Profil bearbeiten →
+          <Link
+            href="/konto/einstellungen"
+            className="inline-flex items-center gap-1 text-red-600 hover:text-red-700 text-sm font-medium mt-4 transition-colors"
+          >
+            Profil bearbeiten <ArrowRight size={14} />
           </Link>
         </div>
 
-        <div className="bg-white border border-[#E0E0E0] rounded-lg p-6">
-          <h2 className="text-lg font-bold mb-4">Lieferadresse</h2>
+        {/* Shipping Address */}
+        <div className="bg-white rounded-2xl border border-gray-100 p-6">
+          <h2 className="text-lg font-bold text-gray-900 mb-4">Lieferadresse</h2>
           {user.shippingStreet ? (
-            <address className="not-italic text-sm text-[#666]">
-              {user.firstName} {user.lastName}<br />
-              {user.shippingStreet}<br />
-              {user.shippingPostalCode} {user.shippingCity}
+            <address className="not-italic text-gray-600 space-y-1">
+              <p className="font-medium text-gray-900">{user.firstName} {user.lastName}</p>
+              <p>{user.shippingStreet}</p>
+              <p>{user.shippingPostalCode} {user.shippingCity}</p>
             </address>
           ) : (
-            <p className="text-sm text-[#666]">Keine Lieferadresse hinterlegt.</p>
+            <p className="text-gray-500">Keine Lieferadresse hinterlegt.</p>
           )}
-          <Link href="/konto/einstellungen" className="text-[#E31E24] hover:underline text-sm mt-4 block">
-            Adresse bearbeiten →
+          <Link
+            href="/konto/einstellungen"
+            className="inline-flex items-center gap-1 text-red-600 hover:text-red-700 text-sm font-medium mt-4 transition-colors"
+          >
+            Adresse bearbeiten <ArrowRight size={14} />
           </Link>
         </div>
       </div>

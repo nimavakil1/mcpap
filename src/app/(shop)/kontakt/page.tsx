@@ -2,12 +2,8 @@
 
 import { useState } from 'react';
 import Link from 'next/link';
-import { ChevronRight, Mail, Phone, MapPin, Clock, Send } from 'lucide-react';
+import { ChevronRight, Mail, Phone, MapPin, Clock, Send, MessageSquare, ArrowRight } from 'lucide-react';
 import toast from 'react-hot-toast';
-import Button from '@/components/ui/Button';
-import Input from '@/components/ui/Input';
-import Select from '@/components/ui/Select';
-import Textarea from '@/components/ui/Textarea';
 
 const SUBJECTS = [
   { value: 'general', label: 'Allgemeine Anfrage' },
@@ -63,177 +59,246 @@ export default function KontaktPage() {
   };
 
   return (
-    <div className="container py-6">
-      <nav className="breadcrumb mb-6">
-        <Link href="/">Startseite</Link>
-        <ChevronRight size={16} className="breadcrumb-separator" />
-        <span className="text-[#1A1A1A] font-medium">Kontakt</span>
-      </nav>
+    <div className="min-h-screen bg-gray-50">
+      <div className="container py-8">
+        {/* Breadcrumb */}
+        <nav className="flex items-center gap-2 text-sm mb-8">
+          <Link href="/" className="text-gray-500 hover:text-red-600 transition-colors">
+            Startseite
+          </Link>
+          <ChevronRight size={14} className="text-gray-400" />
+          <span className="text-gray-900 font-medium">Kontakt</span>
+        </nav>
 
-      <div className="max-w-5xl mx-auto">
-        <h1 className="text-3xl font-bold mb-8">Kontakt</h1>
+        <div className="max-w-5xl mx-auto">
+          {/* Header */}
+          <div className="text-center mb-12">
+            <div className="w-16 h-16 bg-red-100 rounded-2xl flex items-center justify-center mx-auto mb-4">
+              <MessageSquare size={32} className="text-red-600" />
+            </div>
+            <h1 className="text-3xl font-bold text-gray-900 mb-3">Kontakt</h1>
+            <p className="text-gray-500">Wir sind für Sie da - schreiben Sie uns!</p>
+          </div>
 
-        <div className="bg-[#FF6B00]/10 border border-[#FF6B00] rounded-lg p-4 mb-8">
-          <p className="text-[#FF6B00] font-medium">
-            ⚠️ DEMO - Dies ist eine Testumgebung und keine echte Shop-Website.
-          </p>
-        </div>
+          {/* Demo Notice */}
+          <div className="bg-amber-50 border border-amber-200 rounded-2xl p-4 mb-8">
+            <p className="text-amber-700 font-medium text-center">
+              DEMO - Dies ist eine Testumgebung und keine echte Shop-Website.
+            </p>
+          </div>
 
-        <div className="grid lg:grid-cols-3 gap-8">
-          {/* Contact Info */}
-          <div className="space-y-6">
-            <div className="bg-white border border-[#E0E0E0] rounded-lg p-6">
-              <h2 className="text-lg font-bold mb-4">So erreichen Sie uns</h2>
+          <div className="grid lg:grid-cols-3 gap-8">
+            {/* Contact Info */}
+            <div className="space-y-6">
+              <div className="bg-white rounded-2xl border border-gray-100 p-6 hover:shadow-lg hover:shadow-gray-200/50 transition-all">
+                <h2 className="font-bold text-gray-900 mb-6">So erreichen Sie uns</h2>
 
-              <div className="space-y-4">
-                <div className="flex items-start gap-3">
-                  <Phone size={20} className="text-[#E31E24] flex-shrink-0 mt-1" />
-                  <div>
-                    <p className="font-medium">Telefon</p>
-                    <p className="text-[#666]">+49 (0) 30 123456-0</p>
+                <div className="space-y-5">
+                  <div className="flex items-start gap-4">
+                    <div className="w-10 h-10 bg-red-100 rounded-xl flex items-center justify-center flex-shrink-0">
+                      <Phone size={18} className="text-red-600" />
+                    </div>
+                    <div>
+                      <p className="font-medium text-gray-900">Telefon</p>
+                      <a href="tel:+4930123456780" className="text-gray-600 hover:text-red-600 transition-colors">
+                        +49 (0) 30 123456-0
+                      </a>
+                    </div>
                   </div>
-                </div>
 
-                <div className="flex items-start gap-3">
-                  <Mail size={20} className="text-[#E31E24] flex-shrink-0 mt-1" />
-                  <div>
-                    <p className="font-medium">E-Mail</p>
-                    <p className="text-[#666]">info@mcpaper-demo.de</p>
+                  <div className="flex items-start gap-4">
+                    <div className="w-10 h-10 bg-red-100 rounded-xl flex items-center justify-center flex-shrink-0">
+                      <Mail size={18} className="text-red-600" />
+                    </div>
+                    <div>
+                      <p className="font-medium text-gray-900">E-Mail</p>
+                      <a href="mailto:info@mcpaper-demo.de" className="text-gray-600 hover:text-red-600 transition-colors">
+                        info@mcpaper-demo.de
+                      </a>
+                    </div>
                   </div>
-                </div>
 
-                <div className="flex items-start gap-3">
-                  <MapPin size={20} className="text-[#E31E24] flex-shrink-0 mt-1" />
-                  <div>
-                    <p className="font-medium">Adresse</p>
-                    <p className="text-[#666]">
-                      McPaper AG (Demo)<br />
-                      Musterstraße 123<br />
-                      10115 Berlin
-                    </p>
+                  <div className="flex items-start gap-4">
+                    <div className="w-10 h-10 bg-red-100 rounded-xl flex items-center justify-center flex-shrink-0">
+                      <MapPin size={18} className="text-red-600" />
+                    </div>
+                    <div>
+                      <p className="font-medium text-gray-900">Adresse</p>
+                      <p className="text-gray-600">
+                        McPaper AG (Demo)<br />
+                        Musterstraße 123<br />
+                        10115 Berlin
+                      </p>
+                    </div>
                   </div>
-                </div>
 
-                <div className="flex items-start gap-3">
-                  <Clock size={20} className="text-[#E31E24] flex-shrink-0 mt-1" />
-                  <div>
-                    <p className="font-medium">Erreichbarkeit</p>
-                    <p className="text-[#666]">
-                      Mo-Fr: 8:00 - 18:00 Uhr<br />
-                      Sa: 9:00 - 14:00 Uhr
-                    </p>
+                  <div className="flex items-start gap-4">
+                    <div className="w-10 h-10 bg-red-100 rounded-xl flex items-center justify-center flex-shrink-0">
+                      <Clock size={18} className="text-red-600" />
+                    </div>
+                    <div>
+                      <p className="font-medium text-gray-900">Erreichbarkeit</p>
+                      <p className="text-gray-600">
+                        Mo-Fr: 8:00 - 18:00 Uhr<br />
+                        Sa: 9:00 - 14:00 Uhr
+                      </p>
+                    </div>
                   </div>
                 </div>
               </div>
+
+              {/* FAQ Hint */}
+              <div className="bg-white rounded-2xl border border-gray-100 p-6 hover:shadow-lg hover:shadow-gray-200/50 transition-all">
+                <h3 className="font-bold text-gray-900 mb-3">Häufige Fragen?</h3>
+                <p className="text-sm text-gray-600 mb-4">
+                  Viele Antworten finden Sie bereits in unseren FAQ oder auf unseren Informationsseiten:
+                </p>
+                <ul className="space-y-2">
+                  {[
+                    { href: '/versand', label: 'Versand & Lieferung' },
+                    { href: '/zahlungsarten', label: 'Zahlungsarten' },
+                    { href: '/widerrufsrecht', label: 'Widerrufsrecht' },
+                  ].map((link) => (
+                    <li key={link.href}>
+                      <Link
+                        href={link.href}
+                        className="flex items-center gap-2 text-sm text-red-600 hover:text-red-700 font-medium transition-colors"
+                      >
+                        <ArrowRight size={14} />
+                        {link.label}
+                      </Link>
+                    </li>
+                  ))}
+                </ul>
+              </div>
             </div>
 
-            {/* FAQ Hint */}
-            <div className="bg-[#F5F5F5] rounded-lg p-6">
-              <h3 className="font-bold mb-2">Häufige Fragen?</h3>
-              <p className="text-sm text-[#666] mb-3">
-                Viele Antworten finden Sie bereits in unseren FAQ oder auf unseren Informationsseiten:
-              </p>
-              <ul className="text-sm space-y-2">
-                <li>
-                  <Link href="/versand" className="text-[#E31E24] hover:underline">
-                    → Versand & Lieferung
-                  </Link>
-                </li>
-                <li>
-                  <Link href="/zahlungsarten" className="text-[#E31E24] hover:underline">
-                    → Zahlungsarten
-                  </Link>
-                </li>
-                <li>
-                  <Link href="/widerrufsrecht" className="text-[#E31E24] hover:underline">
-                    → Widerrufsrecht
-                  </Link>
-                </li>
-              </ul>
-            </div>
-          </div>
-
-          {/* Contact Form */}
-          <div className="lg:col-span-2">
-            <div className="bg-white border border-[#E0E0E0] rounded-lg p-6">
-              <h2 className="text-lg font-bold mb-4">Kontaktformular</h2>
-              <p className="text-[#666] mb-6">
-                Füllen Sie das Formular aus und wir melden uns schnellstmöglich bei Ihnen.
-              </p>
-
-              <form onSubmit={handleSubmit} className="space-y-4">
-                <div className="grid md:grid-cols-2 gap-4">
-                  <Input
-                    label="Name"
-                    value={formData.name}
-                    onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                    required
-                    placeholder="Ihr Name"
-                  />
-                  <Input
-                    label="E-Mail"
-                    type="email"
-                    value={formData.email}
-                    onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-                    required
-                    placeholder="ihre@email.de"
-                  />
-                </div>
-
-                <div className="grid md:grid-cols-2 gap-4">
-                  <Input
-                    label="Telefon (optional)"
-                    type="tel"
-                    value={formData.phone}
-                    onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
-                    placeholder="+49 123 456789"
-                  />
-                  <Select
-                    label="Betreff"
-                    value={formData.subject}
-                    onChange={(e) => setFormData({ ...formData, subject: e.target.value })}
-                    options={SUBJECTS}
-                  />
-                </div>
-
-                {(formData.subject === 'order' || formData.subject === 'returns') && (
-                  <Input
-                    label="Bestellnummer"
-                    value={formData.orderNumber}
-                    onChange={(e) => setFormData({ ...formData, orderNumber: e.target.value })}
-                    placeholder="z.B. MP-ABC123"
-                  />
-                )}
-
-                <Textarea
-                  label="Nachricht"
-                  value={formData.message}
-                  onChange={(e) => setFormData({ ...formData, message: e.target.value })}
-                  required
-                  rows={6}
-                  placeholder="Wie können wir Ihnen helfen?"
-                />
-
-                <p className="text-xs text-[#666]">
-                  Mit dem Absenden des Formulars erklären Sie sich mit der Verarbeitung Ihrer Daten
-                  gemäß unserer{' '}
-                  <Link href="/datenschutz" className="text-[#E31E24] hover:underline">
-                    Datenschutzerklärung
-                  </Link>{' '}
-                  einverstanden.
+            {/* Contact Form */}
+            <div className="lg:col-span-2">
+              <div className="bg-white rounded-2xl border border-gray-100 p-6 hover:shadow-lg hover:shadow-gray-200/50 transition-all">
+                <h2 className="font-bold text-gray-900 mb-2">Kontaktformular</h2>
+                <p className="text-gray-600 mb-6">
+                  Füllen Sie das Formular aus und wir melden uns schnellstmöglich bei Ihnen.
                 </p>
 
-                <Button
-                  type="submit"
-                  variant="primary"
-                  size="lg"
-                  isLoading={isSubmitting}
-                  className="w-full md:w-auto"
-                >
-                  <Send size={18} className="mr-2" />
-                  Nachricht senden
-                </Button>
-              </form>
+                <form onSubmit={handleSubmit} className="space-y-5">
+                  <div className="grid md:grid-cols-2 gap-4">
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-2">
+                        Name <span className="text-red-500">*</span>
+                      </label>
+                      <input
+                        type="text"
+                        value={formData.name}
+                        onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+                        required
+                        placeholder="Ihr Name"
+                        className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-4 focus:ring-red-500/10 focus:border-red-500 transition-all"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-2">
+                        E-Mail <span className="text-red-500">*</span>
+                      </label>
+                      <input
+                        type="email"
+                        value={formData.email}
+                        onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+                        required
+                        placeholder="ihre@email.de"
+                        className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-4 focus:ring-red-500/10 focus:border-red-500 transition-all"
+                      />
+                    </div>
+                  </div>
+
+                  <div className="grid md:grid-cols-2 gap-4">
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-2">
+                        Telefon (optional)
+                      </label>
+                      <input
+                        type="tel"
+                        value={formData.phone}
+                        onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
+                        placeholder="+49 123 456789"
+                        className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-4 focus:ring-red-500/10 focus:border-red-500 transition-all"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-2">
+                        Betreff
+                      </label>
+                      <select
+                        value={formData.subject}
+                        onChange={(e) => setFormData({ ...formData, subject: e.target.value })}
+                        className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl text-gray-900 focus:outline-none focus:ring-4 focus:ring-red-500/10 focus:border-red-500 transition-all"
+                      >
+                        {SUBJECTS.map((subject) => (
+                          <option key={subject.value} value={subject.value}>
+                            {subject.label}
+                          </option>
+                        ))}
+                      </select>
+                    </div>
+                  </div>
+
+                  {(formData.subject === 'order' || formData.subject === 'returns') && (
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-2">
+                        Bestellnummer
+                      </label>
+                      <input
+                        type="text"
+                        value={formData.orderNumber}
+                        onChange={(e) => setFormData({ ...formData, orderNumber: e.target.value })}
+                        placeholder="z.B. MP-ABC123"
+                        className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-4 focus:ring-red-500/10 focus:border-red-500 transition-all"
+                      />
+                    </div>
+                  )}
+
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                      Nachricht <span className="text-red-500">*</span>
+                    </label>
+                    <textarea
+                      value={formData.message}
+                      onChange={(e) => setFormData({ ...formData, message: e.target.value })}
+                      required
+                      rows={6}
+                      placeholder="Wie können wir Ihnen helfen?"
+                      className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-4 focus:ring-red-500/10 focus:border-red-500 transition-all resize-none"
+                    />
+                  </div>
+
+                  <p className="text-xs text-gray-500">
+                    Mit dem Absenden des Formulars erklären Sie sich mit der Verarbeitung Ihrer Daten
+                    gemäß unserer{' '}
+                    <Link href="/datenschutz" className="text-red-600 hover:underline">
+                      Datenschutzerklärung
+                    </Link>{' '}
+                    einverstanden.
+                  </p>
+
+                  <button
+                    type="submit"
+                    disabled={isSubmitting}
+                    className="inline-flex items-center justify-center gap-2 px-8 py-3 bg-red-600 hover:bg-red-700 text-white font-semibold rounded-full transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+                  >
+                    {isSubmitting ? (
+                      <>
+                        <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+                        Wird gesendet...
+                      </>
+                    ) : (
+                      <>
+                        <Send size={18} />
+                        Nachricht senden
+                      </>
+                    )}
+                  </button>
+                </form>
+              </div>
             </div>
           </div>
         </div>
