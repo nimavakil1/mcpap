@@ -54,7 +54,7 @@ export async function PUT(
         ean: body.ean || null,
         slug: body.name.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, ''),
         shortDescription: body.shortDescription || null,
-        longDescription: body.longDescription || null,
+        description: body.description || null,
         manufacturer: body.manufacturer || null,
         basePrice: body.basePrice,
         taxRate: body.taxRate,

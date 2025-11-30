@@ -13,7 +13,7 @@ interface Product {
   name: string;
   slug: string;
   shortDescription?: string;
-  longDescription?: string;
+  description?: string;
   manufacturer?: string;
   basePrice: number;
   taxRate: number;
@@ -187,11 +187,11 @@ export default function EditProductPage() {
             </div>
             <div className="col-span-2">
               <label className="block text-sm font-medium text-gray-700 mb-1">
-                Langbeschreibung
+                Beschreibung
               </label>
               <textarea
-                value={product.longDescription || ''}
-                onChange={(e) => setProduct({ ...product, longDescription: e.target.value })}
+                value={product.description || ''}
+                onChange={(e) => setProduct({ ...product, description: e.target.value })}
                 rows={4}
                 className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:border-red-500"
               />
