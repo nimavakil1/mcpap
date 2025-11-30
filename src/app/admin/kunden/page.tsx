@@ -82,7 +82,7 @@ export default async function CustomersPage({ searchParams }: CustomersPageProps
             <option value="">Alle Kundengruppen</option>
             {customerGroups.map((group) => (
               <option key={group.id} value={group.id}>
-                {group.name} ({group.discountPercentage}%)
+                {group.name} ({Number(group.discountPercentage)}%)
               </option>
             ))}
           </select>
@@ -146,11 +146,11 @@ export default async function CustomersPage({ searchParams }: CustomersPageProps
                     {customer.customerGroup && (
                       <span
                         className={`px-2 py-1 rounded text-xs font-medium ${
-                          customer.customerGroup.discountPercentage >= 15
+                          Number(customer.customerGroup.discountPercentage) >= 15
                             ? 'bg-purple-100 text-purple-700'
-                            : customer.customerGroup.discountPercentage >= 10
+                            : Number(customer.customerGroup.discountPercentage) >= 10
                             ? 'bg-yellow-100 text-yellow-700'
-                            : customer.customerGroup.discountPercentage >= 5
+                            : Number(customer.customerGroup.discountPercentage) >= 5
                             ? 'bg-gray-200 text-gray-700'
                             : 'bg-gray-100 text-gray-600'
                         }`}
