@@ -20,7 +20,7 @@ export default async function OrdersPage() {
     orderBy: { createdAt: 'desc' },
     include: {
       items: true,
-      vouchers: true,
+      voucher: true,
     },
   });
 
@@ -71,21 +71,21 @@ export default async function OrdersPage() {
                 <div>
                   <span
                     className={`px-3 py-1 rounded text-sm font-medium ${
-                      order.status === 'DELIVERED'
+                      order.status === 'delivered'
                         ? 'bg-[#28A745]/10 text-[#28A745]'
-                        : order.status === 'SHIPPED'
+                        : order.status === 'shipped'
                         ? 'bg-[#17A2B8]/10 text-[#17A2B8]'
-                        : order.status === 'CANCELLED'
+                        : order.status === 'cancelled'
                         ? 'bg-[#DC3545]/10 text-[#DC3545]'
                         : 'bg-[#FF6B00]/10 text-[#FF6B00]'
                     }`}
                   >
-                    {order.status === 'PENDING' && 'In Bearbeitung'}
-                    {order.status === 'CONFIRMED' && 'Bestätigt'}
-                    {order.status === 'PROCESSING' && 'Wird verarbeitet'}
-                    {order.status === 'SHIPPED' && 'Versendet'}
-                    {order.status === 'DELIVERED' && 'Zugestellt'}
-                    {order.status === 'CANCELLED' && 'Storniert'}
+                    {order.status === 'pending' && 'Ausstehend'}
+                    {order.status === 'paid' && 'Bezahlt'}
+                    {order.status === 'processing' && 'Wird verarbeitet'}
+                    {order.status === 'shipped' && 'Versendet'}
+                    {order.status === 'delivered' && 'Zugestellt'}
+                    {order.status === 'cancelled' && 'Storniert'}
                   </span>
                 </div>
               </div>
@@ -112,10 +112,10 @@ export default async function OrdersPage() {
                 </div>
 
                 {/* Voucher Info */}
-                {order.vouchers.length > 0 && (
+                {order.voucher && (
                   <div className="mt-4 p-3 bg-[#FF6B00]/10 rounded">
                     <p className="text-sm text-[#FF6B00] font-medium">
-                      🎁 Filialgutschein: {order.vouchers[0].code} ({formatPrice(Number(order.vouchers[0].amount))})
+                      🎁 Filialgutschein: {order.voucher.code} ({formatPrice(Number(order.voucher.amount))})
                     </p>
                   </div>
                 )}
