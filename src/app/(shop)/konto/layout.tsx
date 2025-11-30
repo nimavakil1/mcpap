@@ -18,7 +18,7 @@ const navItems = [
 export default async function AccountLayout({ children }: AccountLayoutProps) {
   const session = await getSession();
 
-  if (!session || session.role === 'ADMIN' || session.role === 'SUPER_ADMIN') {
+  if (!session || session.isAdmin) {
     redirect('/anmelden?redirect=/konto');
   }
 
