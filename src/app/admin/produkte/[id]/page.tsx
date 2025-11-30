@@ -3,7 +3,7 @@
 import { useEffect, useState } from 'react';
 import { useRouter, useParams } from 'next/navigation';
 import Link from 'next/link';
-import { ArrowLeft, Save, Loader2, Package, ImagePlus, X } from 'lucide-react';
+import { ArrowLeft, Save, Loader2, Package, Search, X, Check, Trash2 } from 'lucide-react';
 import toast from 'react-hot-toast';
 
 interface Product {
@@ -36,6 +36,13 @@ interface Category {
   children?: Category[];
 }
 
+interface SearchImage {
+  url: string;
+  thumbnail: string;
+  title: string;
+  source: string;
+}
+
 export default function EditProductPage() {
   const router = useRouter();
   const params = useParams();
@@ -45,6 +52,13 @@ export default function EditProductPage() {
   const [saving, setSaving] = useState(false);
   const [product, setProduct] = useState<Product | null>(null);
   const [categories, setCategories] = useState<Category[]>([]);
+
+  // Image search state
+  const [showImageSearch, setShowImageSearch] = useState(false);
+  const [searching, setSearching] = useState(false);
+  const [searchResults, setSearchResults] = useState<SearchImage[]>([]);
+  const [selectedImages, setSelectedImages] = useState<Set<string>>(new Set());
+  const [savingImages, setSavingImages] = useState(false);
 
   useEffect(() => {
     fetchProduct();
@@ -95,6 +109,112 @@ export default function EditProductPage() {
       toast.error('Fehler beim Speichern');
     } finally {
       setSaving(false);
+    }
+  };
+
+  const handleSearchImages = async () => {
+    if (!product) return;
+
+    setSearching(true);
+    setSearchResults([]);
+    setSelectedImages(new Set());
+
+    try {
+      const searchQuery = product.ean || product.name;
+      const res = await fetch(`/api/admin/products/${productId}/search-images?q=${encodeURIComponent(searchQuery)}`);
+      const data = await res.json();
+
+      if (data.error) {
+        toast.error(data.error);
+        return;
+      }
+
+      setSearchResults(data.images || []);
+      if (data.images?.length === 0) {
+        toast.error('Keine Bilder gefunden');
+      }
+    } catch (error) {
+      toast.error('Fehler bei der Bildersuche');
+    } finally {
+      setSearching(false);
+    }
+  };
+
+  const toggleImageSelection = (url: string) => {
+    const newSelected = new Set(selectedImages);
+    if (newSelected.has(url)) {
+      newSelected.delete(url);
+    } else {
+      if (newSelected.size >= 3) {
+        toast.error('Maximal 3 Bilder auswählen');
+        return;
+      }
+      newSelected.add(url);
+    }
+    setSelectedImages(newSelected);
+  };
+
+  const handleSaveSelectedImages = async () => {
+    if (selectedImages.size === 0) {
+      toast.error('Bitte wählen Sie mindestens ein Bild aus');
+      return;
+    }
+
+    setSavingImages(true);
+    try {
+      const res = await fetch(`/api/admin/products/${productId}/save-images`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ imageUrls: Array.from(selectedImages) }),
+      });
+
+      const data = await res.json();
+
+      if (!res.ok) {
+        throw new Error(data.error || 'Failed to save images');
+      }
+
+      toast.success(`${data.saved} Bilder gespeichert`);
+      setShowImageSearch(false);
+      setSearchResults([]);
+      setSelectedImages(new Set());
+      fetchProduct(); // Refresh to show new images
+    } catch (error: any) {
+      toast.error(error.message || 'Fehler beim Speichern der Bilder');
+    } finally {
+      setSavingImages(false);
+    }
+  };
+
+  const handleDeleteImage = async (imageId: string) => {
+    if (!confirm('Bild wirklich löschen?')) return;
+
+    try {
+      const res = await fetch(`/api/admin/products/${productId}/images/${imageId}`, {
+        method: 'DELETE',
+      });
+
+      if (!res.ok) throw new Error('Failed to delete');
+
+      toast.success('Bild gelöscht');
+      fetchProduct();
+    } catch (error) {
+      toast.error('Fehler beim Löschen');
+    }
+  };
+
+  const handleSetPrimary = async (imageId: string) => {
+    try {
+      const res = await fetch(`/api/admin/products/${productId}/images/${imageId}/primary`, {
+        method: 'PUT',
+      });
+
+      if (!res.ok) throw new Error('Failed to set primary');
+
+      toast.success('Hauptbild gesetzt');
+      fetchProduct();
+    } catch (error) {
+      toast.error('Fehler beim Setzen des Hauptbildes');
     }
   };
 
@@ -341,7 +461,20 @@ export default function EditProductPage() {
 
         {/* Images */}
         <div className="bg-white border border-gray-200 rounded-lg p-6">
-          <h2 className="text-lg font-semibold mb-4">Bilder</h2>
+          <div className="flex items-center justify-between mb-4">
+            <h2 className="text-lg font-semibold">Bilder</h2>
+            <button
+              type="button"
+              onClick={() => {
+                setShowImageSearch(true);
+                handleSearchImages();
+              }}
+              className="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
+            >
+              <Search size={18} />
+              Bilder suchen
+            </button>
+          </div>
           <div className="grid grid-cols-4 gap-4">
             {product.images.map((image) => (
               <div key={image.id} className="relative group">
@@ -355,6 +488,26 @@ export default function EditProductPage() {
                     Hauptbild
                   </span>
                 )}
+                <div className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity rounded-lg flex items-center justify-center gap-2">
+                  {!image.isPrimary && (
+                    <button
+                      type="button"
+                      onClick={() => handleSetPrimary(image.id)}
+                      className="p-2 bg-green-500 text-white rounded-lg hover:bg-green-600"
+                      title="Als Hauptbild setzen"
+                    >
+                      <Check size={16} />
+                    </button>
+                  )}
+                  <button
+                    type="button"
+                    onClick={() => handleDeleteImage(image.id)}
+                    className="p-2 bg-red-500 text-white rounded-lg hover:bg-red-600"
+                    title="Löschen"
+                  >
+                    <Trash2 size={16} />
+                  </button>
+                </div>
               </div>
             ))}
             {product.images.length === 0 && (
@@ -388,6 +541,105 @@ export default function EditProductPage() {
           </button>
         </div>
       </form>
+
+      {/* Image Search Modal */}
+      {showImageSearch && (
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
+          <div className="bg-white rounded-lg w-full max-w-4xl max-h-[90vh] overflow-hidden flex flex-col">
+            <div className="flex items-center justify-between p-4 border-b border-gray-200">
+              <div>
+                <h2 className="text-lg font-semibold">Bilder suchen</h2>
+                <p className="text-sm text-gray-500">
+                  Suche nach: {product.ean || product.name}
+                </p>
+              </div>
+              <button
+                onClick={() => setShowImageSearch(false)}
+                className="p-2 hover:bg-gray-100 rounded-lg"
+              >
+                <X size={20} />
+              </button>
+            </div>
+
+            <div className="flex-1 overflow-y-auto p-4">
+              {searching ? (
+                <div className="flex flex-col items-center justify-center h-64">
+                  <Loader2 className="w-8 h-8 animate-spin text-blue-500 mb-2" />
+                  <p className="text-gray-500">Suche Bilder...</p>
+                </div>
+              ) : searchResults.length === 0 ? (
+                <div className="flex flex-col items-center justify-center h-64 text-gray-500">
+                  <Package size={48} className="mb-2 opacity-50" />
+                  <p>Keine Bilder gefunden</p>
+                  <button
+                    onClick={handleSearchImages}
+                    className="mt-4 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
+                  >
+                    Erneut suchen
+                  </button>
+                </div>
+              ) : (
+                <div className="grid grid-cols-4 gap-4">
+                  {searchResults.map((image, idx) => (
+                    <div
+                      key={idx}
+                      onClick={() => toggleImageSelection(image.url)}
+                      className={`relative cursor-pointer rounded-lg overflow-hidden border-2 transition-all ${
+                        selectedImages.has(image.url)
+                          ? 'border-blue-500 ring-2 ring-blue-200'
+                          : 'border-gray-200 hover:border-gray-300'
+                      }`}
+                    >
+                      <img
+                        src={image.thumbnail || image.url}
+                        alt={image.title}
+                        className="w-full h-32 object-contain bg-gray-50"
+                        onError={(e) => {
+                          (e.target as HTMLImageElement).src = '/placeholder.png';
+                        }}
+                      />
+                      {selectedImages.has(image.url) && (
+                        <div className="absolute top-2 right-2 w-6 h-6 bg-blue-500 rounded-full flex items-center justify-center">
+                          <Check size={14} className="text-white" />
+                        </div>
+                      )}
+                      <div className="p-2 text-xs text-gray-500 truncate">
+                        {image.source}
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
+
+            <div className="flex items-center justify-between p-4 border-t border-gray-200 bg-gray-50">
+              <p className="text-sm text-gray-600">
+                {selectedImages.size} von max. 3 Bildern ausgewählt
+              </p>
+              <div className="flex gap-3">
+                <button
+                  onClick={() => setShowImageSearch(false)}
+                  className="px-4 py-2 border border-gray-300 rounded-lg hover:bg-white"
+                >
+                  Abbrechen
+                </button>
+                <button
+                  onClick={handleSaveSelectedImages}
+                  disabled={savingImages || selectedImages.size === 0}
+                  className="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:opacity-50"
+                >
+                  {savingImages ? (
+                    <Loader2 size={18} className="animate-spin" />
+                  ) : (
+                    <Save size={18} />
+                  )}
+                  Auswahl speichern
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
