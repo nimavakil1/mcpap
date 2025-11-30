@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { useRouter } from 'next/navigation';
+import { useRouter, usePathname } from 'next/navigation';
 import Link from 'next/link';
 import {
   LayoutDashboard, Package, FolderTree, ShoppingCart, Users, Settings,
@@ -22,13 +22,21 @@ const navigation = [
 
 export default function AdminLayout({ children }: { children: React.ReactNode }) {
   const router = useRouter();
+  const pathname = usePathname();
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [loading, setLoading] = useState(true);
 
+  // Allow login page to render without auth check
+  const isLoginPage = pathname === '/admin/login';
+
   useEffect(() => {
-    checkAuth();
-  }, []);
+    if (!isLoginPage) {
+      checkAuth();
+    } else {
+      setLoading(false);
+    }
+  }, [isLoginPage]);
 
   const checkAuth = async () => {
     try {
@@ -57,6 +65,11 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
         <div className="loader"></div>
       </div>
     );
+  }
+
+  // For login page, just render children without the admin layout
+  if (isLoginPage) {
+    return <>{children}</>;
   }
 
   if (!isAuthenticated) {
