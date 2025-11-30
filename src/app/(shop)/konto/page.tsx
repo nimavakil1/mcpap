@@ -190,17 +190,15 @@ export default async function AccountPage() {
         </div>
 
         <div className="bg-white border border-[#E0E0E0] rounded-lg p-6">
-          <h2 className="text-lg font-bold mb-4">Standardadresse</h2>
-          {user.defaultShippingAddress ? (
+          <h2 className="text-lg font-bold mb-4">Lieferadresse</h2>
+          {user.shippingStreet ? (
             <address className="not-italic text-sm text-[#666]">
-              {(user.defaultShippingAddress as { firstName?: string; lastName?: string; street?: string; postalCode?: string; city?: string }).firstName}{' '}
-              {(user.defaultShippingAddress as { firstName?: string; lastName?: string; street?: string; postalCode?: string; city?: string }).lastName}<br />
-              {(user.defaultShippingAddress as { firstName?: string; lastName?: string; street?: string; postalCode?: string; city?: string }).street}<br />
-              {(user.defaultShippingAddress as { firstName?: string; lastName?: string; street?: string; postalCode?: string; city?: string }).postalCode}{' '}
-              {(user.defaultShippingAddress as { firstName?: string; lastName?: string; street?: string; postalCode?: string; city?: string }).city}
+              {user.firstName} {user.lastName}<br />
+              {user.shippingStreet}<br />
+              {user.shippingPostalCode} {user.shippingCity}
             </address>
           ) : (
-            <p className="text-sm text-[#666]">Keine Standardadresse hinterlegt.</p>
+            <p className="text-sm text-[#666]">Keine Lieferadresse hinterlegt.</p>
           )}
           <Link href="/konto/einstellungen" className="text-[#E31E24] hover:underline text-sm mt-4 block">
             Adresse bearbeiten →
