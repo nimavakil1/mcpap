@@ -12,8 +12,8 @@ export function getRedisClient(): Redis | null {
     try {
       redis = new Redis(process.env.REDIS_URL, {
         maxRetriesPerRequest: 3,
-        retryDelayOnFailover: 100,
         enableOfflineQueue: false,
+        lazyConnect: true,
       });
 
       redis.on('error', (err) => {
