@@ -31,7 +31,11 @@ export default async function OrderConfirmationPage({ params }: OrderPageProps) 
       userId: session.id,
     },
     include: {
-      items: true,
+      items: {
+        include: {
+          product: true,
+        },
+      },
       voucher: true,
     },
   });
@@ -156,13 +160,10 @@ export default async function OrderConfirmationPage({ params }: OrderPageProps) 
               {order.items.map((item) => (
                 <div key={item.id} className="py-4 flex justify-between">
                   <div>
-                    <p className="font-medium">{item.productName}</p>
-                    <p className="text-sm text-[#666]">Art.-Nr.: {item.productSku}</p>
+                    <p className="font-medium">{item.product.name}</p>
+                    <p className="text-sm text-[#666]">Art.-Nr.: {item.product.sku}</p>
                     <p className="text-sm text-[#666]">
                       {item.quantity} × {formatPrice(Number(item.unitPrice))}
-                      {item.discountPercentage > 0 && (
-                        <span className="ml-2 text-[#28A745]">(-{item.discountPercentage}%)</span>
-                      )}
                     </p>
                   </div>
                   <p className="font-bold">{formatPrice(Number(item.totalPrice))}</p>
