@@ -53,7 +53,6 @@ export default async function FavoritesPage() {
               <ProductCard
                 key={fav.id}
                 product={fav.product as any}
-                showFavoriteButton={true}
                 isFavorite={true}
               />
             ))}
