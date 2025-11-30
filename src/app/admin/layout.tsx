@@ -115,10 +115,11 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
               <Link
                 key={item.name}
                 href={item.href}
+                style={{ color: '#FFFFFF' }}
                 className={`flex items-center gap-3 px-3 py-2 rounded transition-colors ${
                   isActive
-                    ? 'bg-gray-700 text-white font-medium'
-                    : 'text-white hover:bg-gray-700'
+                    ? 'bg-gray-700 font-medium'
+                    : 'hover:bg-gray-700'
                 }`}
                 onClick={() => setSidebarOpen(false)}
               >
@@ -132,14 +133,16 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
         <div className="absolute bottom-0 left-0 right-0 p-4">
           <button
             onClick={handleLogout}
-            className="flex items-center gap-3 px-3 py-2 w-full text-white hover:bg-gray-700 rounded transition-colors"
+            style={{ color: '#FFFFFF' }}
+            className="flex items-center gap-3 px-3 py-2 w-full hover:bg-gray-700 rounded transition-colors"
           >
             <LogOut size={20} />
             Abmelden
           </button>
           <Link
             href="/"
-            className="flex items-center gap-3 px-3 py-2 mt-2 text-white hover:bg-gray-700 rounded transition-colors"
+            style={{ color: '#FFFFFF' }}
+            className="flex items-center gap-3 px-3 py-2 mt-2 hover:bg-gray-700 rounded transition-colors"
           >
             Zum Shop
           </Link>
