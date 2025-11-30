@@ -178,12 +178,6 @@ export default async function OrderConfirmationPage({ params }: OrderPageProps) 
                 <span className="text-[#666]">Zwischensumme</span>
                 <span>{formatPrice(Number(order.subtotal))}</span>
               </div>
-              {Number(order.discountAmount) > 0 && (
-                <div className="flex justify-between text-[#28A745]">
-                  <span>Kundenrabatt</span>
-                  <span>-{formatPrice(Number(order.discountAmount))}</span>
-                </div>
-              )}
               <div className="flex justify-between">
                 <span className="text-[#666]">Versandkosten</span>
                 <span>{Number(order.shippingCost) === 0 ? 'Kostenlos' : formatPrice(Number(order.shippingCost))}</span>
