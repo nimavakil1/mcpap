@@ -116,8 +116,8 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
                 href={item.href}
                 className={`flex items-center gap-3 px-3 py-2 rounded transition-colors ${
                   isActive
-                    ? 'bg-red-600 text-white'
-                    : 'text-gray-100 hover:bg-gray-700 hover:text-white'
+                    ? 'bg-gray-700 text-white font-medium'
+                    : 'text-white hover:bg-gray-700'
                 }`}
                 onClick={() => setSidebarOpen(false)}
               >
