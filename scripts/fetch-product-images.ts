@@ -10,12 +10,23 @@ const prisma = new PrismaClient();
 // Delay function to avoid rate limiting
 const delay = (ms: number) => new Promise(resolve => setTimeout(resolve, ms));
 
-// Search for product images using EAN
-async function searchProductImages(ean: string, productName: string): Promise<string[]> {
+// Generate a unique but consistent seed from product ID for reproducible images
+function generateSeed(productId: string, index: number): number {
+  let hash = 0;
+  const str = productId + index.toString();
+  for (let i = 0; i < str.length; i++) {
+    const char = str.charCodeAt(i);
+    hash = ((hash << 5) - hash) + char;
+    hash = hash & hash;
+  }
+  return Math.abs(hash) % 1000;
+}
+
+// Search for product images using EAN via UPCitemdb
+async function searchProductImages(ean: string): Promise<string[]> {
   const images: string[] = [];
 
   try {
-    // Search using EAN on UPCitemdb (they have product images)
     const upcResponse = await fetch(`https://api.upcitemdb.com/prod/trial/lookup?upc=${ean}`, {
       headers: {
         'Accept': 'application/json',
@@ -27,47 +38,21 @@ async function searchProductImages(ean: string, productName: string): Promise<st
       if (data.items && data.items.length > 0) {
         const item = data.items[0];
         if (item.images && item.images.length > 0) {
-          images.push(...item.images.slice(0, 2));
+          // Filter for https URLs only
+          const httpsImages = item.images.filter((url: string) => url.startsWith('https://'));
+          images.push(...httpsImages.slice(0, 2));
         }
       }
     }
   } catch (error) {
-    console.log(`  UPCitemdb lookup failed for ${ean}`);
+    // Silently fail
   }
 
-  // If we don't have 2 images yet, try Open Food Facts (works for some products)
-  if (images.length < 2 && ean) {
-    try {
-      const offResponse = await fetch(`https://world.openfoodfacts.org/api/v0/product/${ean}.json`);
-      if (offResponse.ok) {
-        const data = await offResponse.json();
-        if (data.product && data.product.image_url) {
-          images.push(data.product.image_url);
-        }
-        if (data.product && data.product.image_front_url && images.length < 2) {
-          images.push(data.product.image_front_url);
-        }
-      }
-    } catch (error) {
-      // Silently fail
-    }
-  }
-
-  return images.slice(0, 2);
-}
-
-// Generate search-based image URL using DuckDuckGo or similar
-function generateSearchImageUrl(productName: string, manufacturer: string | null): string {
-  // Use a reliable image service with product-related images
-  const searchTerm = encodeURIComponent(`${manufacturer || ''} ${productName}`.trim());
-
-  // These are placeholder URLs that will be replaced with actual search results
-  // For now, use high-quality stock images from Unsplash based on product category
-  return `https://source.unsplash.com/400x400/?office,supplies,${searchTerm}`;
+  return images;
 }
 
 async function main() {
-  console.log('🖼️  Fetching real product images by EAN...\n');
+  console.log('🖼️  Fetching product images...\n');
 
   // Step 1: Delete all existing images
   console.log('🗑️  Removing all existing product images...');
@@ -84,7 +69,7 @@ async function main() {
   console.log(`📦 Found ${products.length} products to process\n`);
 
   let successCount = 0;
-  let failCount = 0;
+  let eanFoundCount = 0;
 
   for (let i = 0; i < products.length; i++) {
     const product = products[i];
@@ -95,40 +80,26 @@ async function main() {
     // Try to find images by EAN
     if (product.ean) {
       console.log(`   Searching EAN: ${product.ean}`);
-      imageUrls = await searchProductImages(product.ean, product.name);
-      await delay(500); // Rate limiting
+      imageUrls = await searchProductImages(product.ean);
+
+      if (imageUrls.length > 0) {
+        console.log(`   Found ${imageUrls.length} images via EAN`);
+        eanFoundCount++;
+      }
+
+      await delay(300); // Rate limiting for API
     }
 
-    // If no images found, generate fallback URLs
-    if (imageUrls.length === 0) {
-      console.log(`   No images found via EAN, using category fallback`);
+    // Generate Lorem Picsum URLs as fallback (these always work!)
+    // Using unique seeds based on product ID for consistent but varied images
+    const seed1 = generateSeed(product.id, 1);
+    const seed2 = generateSeed(product.id, 2);
 
-      // Use category-specific Unsplash images
-      const categoryKeywords: Record<string, string> = {
-        'papier-drucken': 'paper,office',
-        'schreibwaren': 'pen,pencil,stationery',
-        'ordnen-archivieren': 'folder,binder,filing',
-        'tinte-toner': 'printer,ink,cartridge',
-        'buerotechnik': 'calculator,office,technology',
-        'versand-verpackung': 'package,shipping,box',
-        'hygiene-reinigung': 'cleaning,hygiene,tissue',
-        'praesentation': 'presentation,whiteboard,flipchart',
-        'schule-kreativ': 'school,craft,creative',
-        'bueromoebel-accessoires': 'desk,office,furniture',
-      };
-
-      const keywords = categoryKeywords[product.category?.slug || ''] || 'office,supplies';
-
-      // Generate 2 different Unsplash image URLs
-      imageUrls = [
-        `https://source.unsplash.com/400x400/?${keywords}&sig=${product.id.slice(0, 8)}`,
-        `https://source.unsplash.com/400x400/?${keywords}&sig=${product.id.slice(8, 16)}`,
-      ];
-    }
-
-    // Ensure we have exactly 2 images (pad with fallback if needed)
+    // Pad with Lorem Picsum images if we don't have 2
     while (imageUrls.length < 2) {
-      imageUrls.push(`https://source.unsplash.com/400x400/?office,product&sig=${Date.now()}`);
+      const seed = imageUrls.length === 0 ? seed1 : seed2;
+      // Lorem Picsum with seed for consistent images per product
+      imageUrls.push(`https://picsum.photos/seed/${seed}/400/400`);
     }
 
     // Create image records
@@ -156,16 +127,12 @@ async function main() {
       successCount++;
     } catch (error) {
       console.log(`   ❌ Failed to add images`);
-      failCount++;
     }
-
-    // Small delay between products
-    await delay(100);
   }
 
   console.log(`\n📊 Summary:`);
   console.log(`   ✅ Success: ${successCount} products`);
-  console.log(`   ❌ Failed: ${failCount} products`);
+  console.log(`   🔍 Found via EAN: ${eanFoundCount} products`);
   console.log(`   📷 Total images created: ${successCount * 2}`);
 
   await prisma.$disconnect();
