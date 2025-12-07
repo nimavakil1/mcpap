@@ -1,6 +1,7 @@
 'use client';
 
 import Link from 'next/link';
+import Image from 'next/image';
 import { motion } from 'framer-motion';
 import {
   ArrowRight,
@@ -226,11 +227,12 @@ export default function HomePage() {
         <div className="absolute bottom-1/4 -right-32 w-96 h-96 bg-red-500/20 rounded-full blur-[128px]" />
 
         <div className="container relative z-10 py-20 lg:py-32">
+          <div className="flex flex-col lg:flex-row items-center gap-12">
           <motion.div
             initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8 }}
-            className="max-w-3xl"
+            className="max-w-3xl lg:flex-1"
           >
             <motion.div
               initial={{ opacity: 0, scale: 0.9 }}
@@ -275,6 +277,24 @@ export default function HomePage() {
               </motion.div>
             </div>
           </motion.div>
+
+          {/* Dragon Mascot */}
+          <motion.div
+            initial={{ opacity: 0, x: 50 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ delay: 0.4, duration: 0.8 }}
+            className="hidden lg:block lg:flex-shrink-0"
+          >
+            <Image
+              src="/images/dragon.png"
+              alt="McPaper Drache Maskottchen"
+              width={400}
+              height={400}
+              className="drop-shadow-2xl"
+              priority
+            />
+          </motion.div>
+          </div>
 
           {/* Stats */}
           <motion.div
